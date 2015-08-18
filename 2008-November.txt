@@ -1,0 +1,338 @@
+From mrustler at gmx.de  Wed Nov 26 00:56:57 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 26 Nov 2008 00:56:57 +0100
+Subject: [Ignition-develop] Porting Ignition
+Message-ID: <1227657417.9071.18.camel@bellodello>
+
+Hi,
+
+one of the development goals of Ignition is to port it to different
+AmigaOS flavours. There is a macro set which has support for:
+-Classic AmigaOS, AOS4, Morphos
+-GNUC, SAS/C, vbcc, STORM, Maxon
+-Libraries, Hooks, Interrupts, Variadic functions
+
+http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/
+
+Unfortunately, it doesn't fully support AROS. AROS has its own
+compatibility macro set which has a different principle. The macros for
+library and hook functions contain the number of the arguments in their
+name. And the functions must be wrapped in
+AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+
+Therefor it's easier to define a new macro set which expands to AROS and
+SDI.
+
+Regards,
+Matthias
+
+
+
+
+From alexandre at balaban.fr  Fri Nov 28 12:01:31 2008
+From: alexandre at balaban.fr (Alexandre Balaban)
+Date: Fri, 28 Nov 2008 12:01:31 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <1227734886.17642.15.camel@bellodello>
+Message-ID: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+
+Hello Matthias,
+
+Moderator: I'm resending this message as the previous seems
+to have gone void ;-)
+
+I'm sorry this discussion led to private email, it seems
+the ignition ML is badly configured so that when you anwser
+it in fact send the mail to the private email instead of
+the ML email. I'm sending a copy of this email to the ML
+we might continue there if you wish.
+
+> Hi,
+>
+> Am Mittwoch, den 26.11.2008, 09:37 +0100 schrieb Alexandre Balaban:
+>> Hello Matthias,
+>>
+>> > one of the development goals of Ignition is to port it to different
+>> > AmigaOS flavours. There is a macro set which has support for:
+>> > -Classic AmigaOS, AOS4, Morphos
+>> > -GNUC, SAS/C, vbcc, STORM, Maxon
+>> > -Libraries, Hooks, Interrupts, Variadic functions
+>> >
+>> > http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/
+>> >
+>> > Unfortunately, it doesn't fully support AROS. AROS has its own
+>> > compatibility macro set which has a different principle. The macros for
+>> > library and hook functions contain the number of the arguments in their
+>> > name. And the functions must be wrapped in
+>> > AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+>> >
+>> > Therefor it's easier to define a new macro set which expands to AROS
+and
+>> > SDI.
+>>
+>> I must say that I hate those function defining macros because they hide
+>> functions' prototype and implementation from every IDE scanner out there
+>> thus making their "function browser" useless. it also prevent
+readability.
+>> May I ask you why AROS can't use standard C function prototypes as other
+>> Amiga OS ?
+>
+> I could do that, but then the arguments are passed on the stack. The
+> result ist that the library isn't any longer compatible with
+> AmigaOs-68k.
+
+Can you elaborate on this ? How would it look like in C ?
+
+> Another case are hook functions. It is possible to define them without
+> marcros. But the you have to set h_Entry to the function HookEntry from
+> amiga.lib, which causes a speed penalty:
+>
+> myhook.h_Entry = HookEntry;
+> myhook.h_SubEntry = (HOOKFUNC)myfunc;
+
+Speed penalty in AROS ? Are you saying that AROS has a different mecanism
+for Hooks ? How the hook functions look like in AROS ?
+
+>> Wouldn't it be better to try to update SDI to fully support AROS instead
+>> of reinventing those macros in each project ?
+>
+> This would be the perfect solution, but I don't know how to do that. The
+> AROS macros have the number of arguments in their name (e.g. AROS_LH2
+> for a library function with 2 parameters.)
+> So a simple wrapper isn't possible.
+
+Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+a library function in AROS that would take two argument and return void ?
+
+
+Also did you already started porting Ignition to AROS ?
+
+Best regards,
+
+Alexandre.
+
+
+
+From axeld at pinc-software.de  Fri Nov 28 20:46:37 2008
+From: axeld at pinc-software.de (=?ISO-8859-1?Q?Axel_D=F6rfler?=)
+Date: Fri, 28 Nov 2008 20:46:37 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+References: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+Message-ID: <49304A9D.2080801@pinc-software.de>
+
+Alexandre Balaban wrote:
+> Moderator: I'm resending this message as the previous seems
+> to have gone void ;-)
+
+It didn't go into the void, you just didn't seem to be subscribed to the 
+mailing list at the time; to reduce spamming, only list members can 
+write messages.
+
+> I'm sorry this discussion led to private email, it seems
+> the ignition ML is badly configured so that when you anwser
+> it in fact send the mail to the private email instead of
+> the ML email. I'm sending a copy of this email to the ML
+> we might continue there if you wish.
+
+I'll take care of it once I'm home again :-) (in case I remember :-))
+
+>>> I must say that I hate those function defining macros because they hide
+>>> functions' prototype and implementation from every IDE scanner out there
+>>> thus making their "function browser" useless. it also prevent readability.
+>>> May I ask you why AROS can't use standard C function prototypes as other
+>>> Amiga OS ?
+
+I can just say that I'm with you on this - if possible, I would like to 
+avoid those macros. But if it isn't we'll just have to accept it.
+If the SDI macros are portable to AROS even with a bit of a hack, I 
+would appreciate that.
+
+>> Another case are hook functions. It is possible to define them without
+>> marcros. But the you have to set h_Entry to the function HookEntry from
+>> amiga.lib, which causes a speed penalty:
+
+That's a pretty minor speed penalty, and can easily be lived with most 
+of the time, I think.
+
+>>> Wouldn't it be better to try to update SDI to fully support AROS instead
+>>> of reinventing those macros in each project ?
+>> This would be the perfect solution, but I don't know how to do that. The
+>> AROS macros have the number of arguments in their name (e.g. AROS_LH2
+>> for a library function with 2 parameters.)
+>> So a simple wrapper isn't possible.
+> Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+> a library function in AROS that would take two argument and return void ?
+
+That's indeed the question. I've already downloaded the current AROS 
+snapshot, but I didn't find the time to have a look at the meaty bits yet.
+I also must say that even though I'm definitely willing to help with 
+this, my time is currently very limited.
+Is there an AROS (VMware/VirtualBox) image that already contains all 
+developer tools (and maybe SVN) to be able to start right away? That 
+would at least simplify testing.
+
+> Also did you already started porting Ignition to AROS ?
+
+Yes, he has a patch pending that caused this discussion (currently for 
+the libs part only, but that's where it should begin, anyway) :-)
+
+Bye,
+    Axel.
+
+
+From alexandre at balaban.fr  Fri Nov 28 22:32:09 2008
+From: alexandre at balaban.fr (Alexandre Balaban)
+Date: Fri, 28 Nov 2008 22:32:09 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <49304A9D.2080801@pinc-software.de>
+References: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+	<49304A9D.2080801@pinc-software.de>
+Message-ID: <1227907929.493063599dc0b@webmail.free.fr>
+
+Selon Axel D?rfler <axeld at pinc-software.de>:
+
+> Alexandre Balaban wrote:
+> > Moderator: I'm resending this message as the previous seems
+> > to have gone void ;-)
+>
+> It didn't go into the void, you just didn't seem to be subscribed to the
+> mailing list at the time; to reduce spamming, only list members can
+> write messages.
+
+In fact I was (else I wouldn't have read Matthias email) but with another
+email address, I just changed it yesterday.
+
+> > I'm sorry this discussion led to private email, it seems
+> > the ignition ML is badly configured so that when you anwser
+> > it in fact send the mail to the private email instead of
+> > the ML email. I'm sending a copy of this email to the ML
+> > we might continue there if you wish.
+>
+> I'll take care of it once I'm home again :-) (in case I remember :-))
+
+Ok no problem one should just remember this or hit the "reply all" button ;-)
+
+> > Also did you already started porting Ignition to AROS ?
+>
+> Yes, he has a patch pending that caused this discussion (currently for
+> the libs part only, but that's where it should begin, anyway) :-)
+
+Interesting in fact I can review this patch to see how I can modify it to
+support AmigaOS 4 once we decided what to do with those macros.
+
+-- 
+Alex.
+
+
+From mrustler at gmx.de  Sun Nov 30 11:24:57 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sun, 30 Nov 2008 11:24:57 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+References: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+Message-ID: <1228040697.8308.33.camel@bellodello>
+
+Am Freitag, den 28.11.2008, 12:01 +0100 schrieb Alexandre Balaban:
+
+> > Am Mittwoch, den 26.11.2008, 09:37 +0100 schrieb Alexandre Balaban:
+> >> Hello Matthias,
+> >>
+> >> > one of the development goals of Ignition is to port it to different
+> >> > AmigaOS flavours. There is a macro set which has support for:
+> >> > -Classic AmigaOS, AOS4, Morphos
+> >> > -GNUC, SAS/C, vbcc, STORM, Maxon
+> >> > -Libraries, Hooks, Interrupts, Variadic functions
+> >> >
+> >> > http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/
+> >> >
+> >> > Unfortunately, it doesn't fully support AROS. AROS has its own
+> >> > compatibility macro set which has a different principle. The macros for
+> >> > library and hook functions contain the number of the arguments in their
+> >> > name. And the functions must be wrapped in
+> >> > AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+> >> >
+> >> > Therefor it's easier to define a new macro set which expands to AROS
+> and
+> >> > SDI.
+> >>
+> >> I must say that I hate those function defining macros because they hide
+> >> functions' prototype and implementation from every IDE scanner out there
+> >> thus making their "function browser" useless. it also prevent
+> readability.
+> >> May I ask you why AROS can't use standard C function prototypes as other
+> >> Amiga OS ?
+
+I'm now trying to use the macros from SDI_compiler.h. This means the
+function arguments changed from 
+"reg(a0) struct foo *bar" to
+"REG(a0, struct foo *bar)".
+
+I've removed all AROS specific macros for the Hook functions.
+
+The remaining problem is the library functions. The SDI REG macro
+expands for AROS to the argument name, hence the register name is lost.
+If someone creates an AROS-68k version it would have stack call instead
+of register call.
+ 
+
+> > I could do that, but then the arguments are passed on the stack. The
+> > result ist that the library isn't any longer compatible with
+> > AmigaOs-68k.
+> 
+> Can you elaborate on this ? How would it look like in C ?
+> 
+> > Another case are hook functions. It is possible to define them without
+> > marcros. But the you have to set h_Entry to the function HookEntry from
+> > amiga.lib, which causes a speed penalty:
+> >
+> > myhook.h_Entry = HookEntry;
+> > myhook.h_SubEntry = (HOOKFUNC)myfunc;
+> 
+> Speed penalty in AROS ? Are you saying that AROS has a different mecanism
+> for Hooks ? How the hook functions look like in AROS ?
+
+I think I was a bit too dramatically. The hook function is called
+indirectly from the HookEntry function. I doubt that this causes a
+recognicable speed loss.
+
+> >> Wouldn't it be better to try to update SDI to fully support AROS instead
+> >> of reinventing those macros in each project ?
+> >
+> > This would be the perfect solution, but I don't know how to do that. The
+> > AROS macros have the number of arguments in their name (e.g. AROS_LH2
+> > for a library function with 2 parameters.)
+> > So a simple wrapper isn't possible.
+> 
+> Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+> a library function in AROS that would take two argument and return void ?
+
+On X86-32 most AROS compatibility macros expand to "air" because on this
+platform the arguments are pushed on the stack.
+
+#define AROS_LH2(t,n,a1,a2,bt,bn,o,s) \
+    __AROS_LH_PREFIX t AROS_SLIB_ENTRY(n,s)(\
+    __AROS_LHA(a1),\
+    __AROS_LHA(a2),\
+    __AROS_LH_BASE(bt,bn)) {
+
+#define __AROS_LH_BASE(basetype,basename)   basetype basename
+#define __AROS_LHA(type,name,reg)     type name
+#define __AROS_LH_PREFIX
+#define AROS_SLIB_ENTRY(n,s)   __AROS_SLIB_ENTRY(n,s)
+#define __AROS_SLIB_ENTRY(n,s)   s ## _ ## n
+
+
+> Also did you already started porting Ignition to AROS ?
+
+Yes. The pScroller.gadget, pTextedit.gadget and gtdrag.library are
+building. Ignition itself needs some work (fixing some GCC related
+issues and removing some #ifdef __AROS__ ;-)
+
+
+Regards,
+Matthias
+
+
+
+

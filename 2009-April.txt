@@ -1,0 +1,50 @@
+From mrustler at gmx.de  Mon Apr 20 19:09:25 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 20 Apr 2009 19:09:25 +0200
+Subject: [Ignition-develop] Makefiles
+Message-ID: <1240247365.8145.3.camel@bellodello>
+
+Hi,
+
+should I switch to normal Makefiles? It would it make easier for you to
+compile Ignition on AROS and in the end, the AROS build-system is
+useless for an AOS4 or MorphOS port.
+
+It would mean that I have to copy the files which are currently created
+by the build-system (headers and library initialisation) into Ignition.
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Mon Apr 20 19:45:48 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Mon, 20 Apr 2009 19:45:48 +0200 CEST
+Subject: [Ignition-develop] Makefiles
+In-Reply-To: <1240247365.8145.3.camel@bellodello>
+Message-ID: <40592212445-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> should I switch to normal Makefiles? It would it make easier for you 
+> to
+> compile Ignition on AROS and in the end, the AROS build-system is
+> useless for an AOS4 or MorphOS port.
+
+Unless we can switch to an mmake only environment, I would be very much 
+in favor of that.
+
+> It would mean that I have to copy the files which are currently 
+> created
+> by the build-system (headers and library initialisation) into 
+> Ignition.
+
+That's certainly fine by me.
+Thanks!
+
+Bye,
+   Axel.
+
+
+

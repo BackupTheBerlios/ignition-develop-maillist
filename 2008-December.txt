@@ -1,0 +1,1870 @@
+From mrustler at gmx.de  Mon Dec  1 00:23:08 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 01 Dec 2008 00:23:08 +0100
+Subject: [Ignition-develop] AROS port
+Message-ID: <1228087388.3864.2.camel@bellodello>
+
+Hi,
+
+I've managed to build Ignition on AROS. This is what I get before it
+crashes.
+
+http://www.mazze-online.de/aros/pictures/ignition.jpg
+
+Bugfixing time ;-)
+
+
+
+
+From mrustler at gmx.de  Mon Dec  1 20:39:02 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 01 Dec 2008 20:39:02 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <49304A9D.2080801@pinc-software.de>
+References: <CDELIIAEABDNOIHODJBBMEONFHAA.alexandre@balaban.fr>
+	<49304A9D.2080801@pinc-software.de>
+Message-ID: <1228160342.8172.26.camel@bellodello>
+
+Hi,
+
+(Resent to the ML because 1st attempt became a private mail.) 
+
+Am Freitag, den 28.11.2008, 20:46 +0100 schrieb Axel D?rfler:
+> Alexandre Balaban wrote:
+
+> >>> I must say that I hate those function defining macros because they hide
+> >>> functions' prototype and implementation from every IDE scanner out there
+> >>> thus making their "function browser" useless. it also prevent readability.
+> >>> May I ask you why AROS can't use standard C function prototypes as other
+> >>> Amiga OS ?
+> 
+> I can just say that I'm with you on this - if possible, I would like to 
+> avoid those macros. But if it isn't we'll just have to accept it.
+> If the SDI macros are portable to AROS even with a bit of a hack, I 
+> would appreciate that.
+
+As said in the mail to Alexandre: the hooks and dispatchers are now
+without any AROS macros.
+
+But when I remove the macros from the library functions, I'll get stack
+call. If there is ever a 68k version of AROS then users will sooner or
+later have a mix of orgignal Amiga and AROS applications. I assume to
+get crashes if someone replaces a library with register call by one with
+stack call. That's wy I want to keep the macros for the library
+functions.
+
+> >>> Wouldn't it be better to try to update SDI to fully support AROS instead
+> >>> of reinventing those macros in each project ?
+> >> This would be the perfect solution, but I don't know how to do that. The
+> >> AROS macros have the number of arguments in their name (e.g. AROS_LH2
+> >> for a library function with 2 parameters.)
+> >> So a simple wrapper isn't possible.
+> > Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+> > a library function in AROS that would take two argument and return void ?
+> 
+> That's indeed the question. I've already downloaded the current AROS 
+> snapshot, but I didn't find the time to have a look at the meaty bits yet.
+> I also must say that even though I'm definitely willing to help with 
+> this, my time is currently very limited.
+> Is there an AROS (VMware/VirtualBox) image that already contains all 
+> developer tools (and maybe SVN) to be able to start right away? That 
+> would at least simplify testing.
+
+If you have Linux on a X86-32 I'm highly recommending that you build
+AROS yourself from the source. This way you can use the AROS
+build-system, the GNU debugger, and can restart quickly after a crash.
+
+There is a distribution for VMware. http://www.vmwaros.org/. It should
+be OK for testing. Problem is the development tools. SVN doesn't exist
+for AROS/native. The build-system exists only for some weeks and is
+probably difficult to set up.
+
+> > Also did you already started porting Ignition to AROS ?
+> 
+> Yes, he has a patch pending that caused this discussion (currently for 
+> the libs part only, but that's where it should begin, anyway) :-)
+
+I'll soon send an update with far less "#ifdef __AROS__".
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Mon Dec  1 21:49:29 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Mon, 01 Dec 2008 21:49:29 +0100 CET
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <1228160342.8172.26.camel@bellodello>
+Message-ID: <41832058816-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> (Resent to the ML because 1st attempt became a private mail.) 
+
+I've had a look, but it seems BerliOS did not send me a password for 
+the lists.
+I'll try to resolve this ASAP.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Tue Dec  2 23:05:13 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Tue, 02 Dec 2008 23:05:13 +0100
+Subject: [Ignition-develop] AROS port
+In-Reply-To: <1324493172-BeMail@zon>
+References: <1324493172-BeMail@zon>
+Message-ID: <1228255513.24742.16.camel@bellodello>
+
+Am Montag, den 01.12.2008, 10:34 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > I've managed to build Ignition on AROS. This is what I get before it
+> > crashes.
+> > 
+> > http://www.mazze-online.de/aros/pictures/ignition.jpg
+> > 
+> > Bugfixing time ;-)
+> 
+> Nice! The class loader is exactly the part you wanted to comment out at 
+> first, just in case the crash happens there :-)
+> 
+> Bye,
+>    Axel.
+
+Here is the backtrace:
+
+#0  0xb7e69d28 in strcmp () from /lib/tls/i686/cmov/libc.so.6
+#1  0x0804f821 in Exec_FindName (list=0xb5e8d3b8, name=0xb6517ecc "icons/obj_pic.icon") at findname.c:77
+#2  0xb649b57a in LoadImage (t=0xb6517ecc "icons/obj_pic.icon") at images.c:139
+#3  0xb6444243 in MakeGClass (name=0xb6517e8c "picture", type=34 '"', sgc=0xb5f18bf0, label=0xb65c95c3 "Bild", image=0xb6517ecc "icons/obj_pic.icon", dispatch=0xb6443d81, draw=0xb64438b4, gi=0xb5f15e80, objsize=28) at classes.c:1351
+#4  0xb64445d8 in InitGClasses () at classes.c:1471
+#5  0xb6473d6d in InitGraphics () at graphic.c:242
+#6  0xb6498abd in InitApp () at ignition.c:1925
+#7  0xb649abb1 in main (argc=1, argv=0xb5e85070) at ignition.c:2562
+
+MyFindName is called like:
+if ((io = (struct ImageObj *)MyFindName((struct List *)&images, t))) {
+
+ln_name seams to contain corrupt data:
+(gdb) print *(struct Node*)&images
+$20 = {ln_Succ = 0xb5f18718, ln_Pred = 0x0, ln_Name = 0xb5f18738 "????
+\030\207??\001", ln_Type = 0 '\0', ln_Pri = 0 '\0'}
+
+Any idea?
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Wed Dec  3 19:44:11 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 03 Dec 2008 19:44:11 +0100
+Subject: [Ignition-develop] Porting Ignition
+In-Reply-To: <1227657417.9071.18.camel@bellodello>
+References: <1227657417.9071.18.camel@bellodello>
+Message-ID: <1228329851.8363.2.camel@bellodello>
+
+Am Mittwoch, den 26.11.2008, 00:56 +0100 schrieb Matthias Rustler:
+> Hi,
+> 
+> one of the development goals of Ignition is to port it to different
+> AmigaOS flavours. There is a macro set which has support for:
+> -Classic AmigaOS, AOS4, Morphos
+> -GNUC, SAS/C, vbcc, STORM, Maxon
+> -Libraries, Hooks, Interrupts, Variadic functions
+> 
+> http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/
+> 
+> Unfortunately, it doesn't fully support AROS. AROS has its own
+> compatibility macro set which has a different principle. The macros for
+> library and hook functions contain the number of the arguments in their
+> name. And the functions must be wrapped in
+> AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+> 
+> Therefor it's easier to define a new macro set which expands to AROS and
+> SDI.
+
+I've attached the current svn diff for the libs at this mail.
+
+I'm now using an extended SDI_compiler.h. The Ignition related stuff is
+at the end of that file. The LIB_L... macros for platforms other than
+AROS still have to be written.
+
+As a side-effect the libs have been ported to GCC (except of non-AROS
+parts like xxx_lib.c). So it builds with very few remaining compiler
+warnings.
+
+Regards,
+Matthias
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ignition_libs.diff.zip
+Type: application/zip
+Size: 27556 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/ignition-develop/attachments/20081203/39f701df/attachment.zip>
+
+From mrustler at gmx.de  Thu Dec  4 00:45:37 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Thu, 04 Dec 2008 00:45:37 +0100
+Subject: [Ignition-develop] AROS port
+In-Reply-To: <1228255513.24742.16.camel@bellodello>
+References: <1324493172-BeMail@zon>  <1228255513.24742.16.camel@bellodello>
+Message-ID: <1228347937.23129.7.camel@bellodello>
+
+Am Dienstag, den 02.12.2008, 23:05 +0100 schrieb Matthias Rustler:
+> Am Montag, den 01.12.2008, 10:34 +0100 schrieb Axel D?rfler:
+> > Matthias Rustler <mrustler at gmx.de> wrote:
+> > > I've managed to build Ignition on AROS. This is what I get before it
+> > > crashes.
+> > > 
+> > > http://www.mazze-online.de/aros/pictures/ignition.jpg
+> > > 
+> > > Bugfixing time ;-)
+> > 
+> > Nice! The class loader is exactly the part you wanted to comment out at 
+> > first, just in case the crash happens there :-)
+> > 
+> > Bye,
+> >    Axel.
+> 
+> Here is the backtrace:
+
+...
+
+Arg.
+
+On AROS the order of struct Node depends on the platform:
+
+>>>>>>
+
+#if (AROS_FLAVOUR & AROS_FLAVOUR_BINCOMPAT)
+struct Node
+{
+    struct Node * ln_Succ,
+		* ln_Pred;
+    UBYTE	  ln_Type;
+    BYTE	  ln_Pri;
+    /* AROS: pointer should be 32bit aligned, but we cannot do this on
+       the native machine because of binary compatibility.
+    */
+    char	* ln_Name;
+};
+
+#else
+struct Node
+{
+    struct Node * ln_Succ,
+		* ln_Pred;
+    /* AROS: pointer should be 32bit aligned */
+    char	* ln_Name;
+    UBYTE	  ln_Type;
+    BYTE	  ln_Pri;
+};
+#endif /* AROS_FLAVOUR */
+
+>>>>>>
+
+This leads to a lot of subtle errors.
+
+I had to change ImageObj to:
+
+struct ImageObj {
+    struct MinNode io_Node;
+#if defined(__AROS__)
+    #warning FIXME when V1 ABI is out
+    STRPTR io_Name;
+    WORD   io_OpenCnt;
+#else
+    WORD   io_OpenCnt;
+    STRPTR io_Name;
+#endif
+    struct Image *io_Image;
+    struct MinList io_Attached;
+};
+
+so that after a conversion to (struct Node*) the name is at the right
+place.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Thu Dec  4 20:10:34 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Thu, 04 Dec 2008 20:10:34 +0100
+Subject: [Ignition-develop] Segfault in GetASCII
+Message-ID: <1228417834.10228.4.camel@bellodello>
+
+Here is my next segfault:
+
+#0  0xb646c72b in GetASCII (ievent=0xb6698378, buffer=0xb61b5244 "?\222??hR\033?ramiga ", buflen=8, code=19712) at cmd.c:116
+#1  0xb646ce9d in SetAppKeyName (ak=0xb6698340) at cmd.c:234
+#2  0xb64ea528 in lpKeys (iff=0xb639d360, context=1229409872, pr=0xb5eb00a0) at prefsio.c:769
+#3  0xb64eb5b3 in LoadPrefsWithHandle (iff=0xb639d360, pr=0xb5eb00a0, flags=65535) at prefsio.c:1108
+#4  0xb64eb793 in LoadPrefs (prefs=0xb5eb00a0, name=0x0, lock=0xb5eadfa8, flags=65535) at prefsio.c:1135
+#5  0xb64d96ab in InitAppPrefs (name=0xb659359e "config/ignition.prefs") at prefs.c:1049
+#6  0xb64bd7c5 in InitApp () at ignition.c:1955
+#7  0xb64bf659 in main (argc=1, argv=0xb5ea5380) at ignition.c:2562
+
+
+Crash happens in line:
+ievent->ie_position.ie_addr = *((APTR *)imsg.IAddress);
+
+because imsg.IAddress is NULL. Is it enough to protect against NULL or
+is this a sign for a more serious problem?
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Thu Dec  4 22:48:35 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Thu, 04 Dec 2008 22:48:35 +0100
+Subject: [Ignition-develop] Segfault in GetASCII
+In-Reply-To: <1228417834.10228.4.camel@bellodello>
+References: <1228417834.10228.4.camel@bellodello>
+Message-ID: <1228427315.28000.1.camel@bellodello>
+
+Am Donnerstag, den 04.12.2008, 20:10 +0100 schrieb Matthias Rustler:
+> Here is my next segfault:
+> 
+> #0  0xb646c72b in GetASCII (ievent=0xb6698378, buffer=0xb61b5244 "?\222??hR\033?ramiga ", buflen=8, code=19712) at cmd.c:116
+> #1  0xb646ce9d in SetAppKeyName (ak=0xb6698340) at cmd.c:234
+> #2  0xb64ea528 in lpKeys (iff=0xb639d360, context=1229409872, pr=0xb5eb00a0) at prefsio.c:769
+> #3  0xb64eb5b3 in LoadPrefsWithHandle (iff=0xb639d360, pr=0xb5eb00a0, flags=65535) at prefsio.c:1108
+> #4  0xb64eb793 in LoadPrefs (prefs=0xb5eb00a0, name=0x0, lock=0xb5eadfa8, flags=65535) at prefsio.c:1135
+> #5  0xb64d96ab in InitAppPrefs (name=0xb659359e "config/ignition.prefs") at prefs.c:1049
+> #6  0xb64bd7c5 in InitApp () at ignition.c:1955
+> #7  0xb64bf659 in main (argc=1, argv=0xb5ea5380) at ignition.c:2562
+> 
+> 
+> Crash happens in line:
+> ievent->ie_position.ie_addr = *((APTR *)imsg.IAddress);
+> 
+> because imsg.IAddress is NULL. Is it enough to protect against NULL or
+> is this a sign for a more serious problem?
+
+I just did it (check for NULL). GUI shows up but crashes early.
+http://www.mazze-online.de/aros/pictures/ignition2.jpg
+
+Next task is to make the preferences loading routines endiannes safe.
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Thu Dec  4 23:38:34 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Thu, 04 Dec 2008 23:38:34 +0100 CET
+Subject: [Ignition-develop] Segfault in GetASCII
+In-Reply-To: <1228427315.28000.1.camel@bellodello>
+Message-ID: <52388418852-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > Crash happens in line:
+> > ievent->ie_position.ie_addr = *((APTR *)imsg.IAddress);
+> > 
+> > because imsg.IAddress is NULL. Is it enough to protect against NULL 
+> > or
+> > is this a sign for a more serious problem?
+
+I've looked at it, but I must admit I don't really understand this 
+scary code :-)
+I have no idea where that IAddress is supposed to come from, and if 
+there should be anyone using imsg before that - so by all means I think 
+we should generally replace this with NULL if it keeps working :-)
+
+> I just did it (check for NULL). GUI shows up but crashes early.
+> http://www.mazze-online.de/aros/pictures/ignition2.jpg
+> 
+> Next task is to make the preferences loading routines endiannes safe.
+
+Oh yes, that's something I did not spend any time with - natural, when 
+using an Amiga :-)
+Please consider adding global defines/functions to handle this instead 
+of adding any AROS specific code. Everything on disk should be big 
+endian, anyway.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Sun Dec  7 11:16:32 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sun, 07 Dec 2008 11:16:32 +0100
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+Message-ID: <1228644992.8125.10.camel@bellodello>
+
+Hi,
+
+after the endian fixes of the preferences loading/saving routines the
+GUI seams to be complete.
+
+But I can't enter anything in the cells, either directly or by the
+formula editor.
+
+I can't see keyboard handling in the main message loop. What functions
+should I look at to find out about cell input?
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Sun Dec  7 13:46:42 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Sun, 07 Dec 2008 13:46:42 +0100 CET
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <1228644992.8125.10.camel@bellodello>
+Message-ID: <10496913936-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> after the endian fixes of the preferences loading/saving routines the
+> GUI seams to be complete.
+
+Great!
+
+> But I can't enter anything in the cells, either directly or by the
+> formula editor.
+> 
+> I can't see keyboard handling in the main message loop. What 
+> functions
+> should I look at to find out about cell input?
+
+The message handling of the project window is in project.c, in the 
+function handleProjIDCMP() - at some point I started to name them 
+differently, so today it should be called HandleProjectIDCMP() instead 
+:-)
+This one then calls HandleTabGadget() which processes the keyboard 
+input in the cells.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Tue Dec  9 22:00:15 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Tue, 09 Dec 2008 22:00:15 +0100
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <10496913936-BeMail@zon>
+References: <10496913936-BeMail@zon>
+Message-ID: <1228856415.11976.2.camel@bellodello>
+
+Am Sonntag, den 07.12.2008, 13:46 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > after the endian fixes of the preferences loading/saving routines the
+> > GUI seams to be complete.
+> 
+> Great!
+> 
+> > But I can't enter anything in the cells, either directly or by the
+> > formula editor.
+> > 
+> > I can't see keyboard handling in the main message loop. What 
+> > functions
+> > should I look at to find out about cell input?
+> 
+> The message handling of the project window is in project.c, in the 
+> function handleProjIDCMP() - at some point I started to name them 
+> differently, so today it should be called HandleProjectIDCMP() instead 
+> :-)
+> This one then calls HandleTabGadget() which processes the keyboard 
+> input in the cells.
+
+NewFontInfo() returns NULL. Can this be the problem?
+
+Maybe AROS's bullet library lacks some features.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Thu Dec 11 22:43:24 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Thu, 11 Dec 2008 22:43:24 +0100
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <1228856415.11976.2.camel@bellodello>
+References: <10496913936-BeMail@zon>  <1228856415.11976.2.camel@bellodello>
+Message-ID: <1229031804.11163.8.camel@bellodello>
+
+Am Dienstag, den 09.12.2008, 22:00 +0100 schrieb Matthias Rustler:
+> Am Sonntag, den 07.12.2008, 13:46 +0100 schrieb Axel D?rfler:
+> > Matthias Rustler <mrustler at gmx.de> wrote:
+> > > after the endian fixes of the preferences loading/saving routines the
+> > > GUI seams to be complete.
+> > 
+> > Great!
+> > 
+> > > But I can't enter anything in the cells, either directly or by the
+> > > formula editor.
+> > > 
+> > > I can't see keyboard handling in the main message loop. What 
+> > > functions
+> > > should I look at to find out about cell input?
+> > 
+> > The message handling of the project window is in project.c, in the 
+> > function handleProjIDCMP() - at some point I started to name them 
+> > differently, so today it should be called HandleProjectIDCMP() instead 
+> > :-)
+> > This one then calls HandleTabGadget() which processes the keyboard 
+> > input in the cells.
+> 
+> NewFontInfo() returns NULL. Can this be the problem?
+> 
+> Maybe AROS's bullet library lacks some features.
+
+Solved. It turned out that the OTAG fonts are stored in big endian.
+
+Actual screenshot:
+http://www.mazze-online.de/aros/pictures/ignition3.jpg
+
+Regards,
+Matthias
+
+
+
+
+From axeld at mail.berlios.de  Thu Dec 11 23:38:33 2008
+From: axeld at mail.berlios.de (axeld at mail.berlios.de)
+Date: Thu, 11 Dec 2008 23:38:33 +0100
+Subject: [Ignition-develop] r4 - trunk
+Message-ID: <200812112238.mBBMcX81006486@sheep.berlios.de>
+
+Author: axeld
+Date: 2008-12-11 23:38:32 +0100 (Thu, 11 Dec 2008)
+New Revision: 4
+ViewCVS: http://svn.berlios.de/viewcvs/haiku?rev=4&view=rev
+
+Modified:
+   trunk/ignition.c
+Log:
+* Some minor style cleanup.
+* Added TODO comment about a language specific problem (we need to use the
+  short common function names instead here).
+
+
+Modified: trunk/ignition.c
+===================================================================
+--- trunk/ignition.c	2008-12-11 22:22:45 UTC (rev 3)
++++ trunk/ignition.c	2008-12-11 22:38:32 UTC (rev 4)
+@@ -113,20 +113,19 @@
+ RemoveToolObj(struct ToolObj *to)
+ {
+     Remove((APTR)to);
+-    FreePooled(pool,to,sizeof(struct ToolObj));
++    FreePooled(pool, to, sizeof(struct ToolObj));
+ }
+ 
+ 
+ void
+-AddToolObj(int32 type,STRPTR name,STRPTR help)
++AddToolObj(int32 type, STRPTR name, STRPTR help)
+ {
+     struct ToolObj *to;
+ 
+-    if (to = AllocPooled(pool,sizeof(struct ToolObj)))
+-    {
++    if (to = AllocPooled(pool, sizeof(struct ToolObj))) {
+         to->to_Type = type;
+         /* strcpy(to->to_Name,name); */
+-        AddTail(&toolobjs,(struct Node *)to);
++        AddTail(&toolobjs, (struct Node *)to);
+     }
+ }
+ 
+@@ -134,7 +133,7 @@
+ struct MinList *
+ GetIconObjsList(struct Prefs *pr)
+ {
+-    if (HasPrefsModule(pr,WDT_PREFICON))
++    if (HasPrefsModule(pr, WDT_PREFICON))
+         return &pr->pr_IconObjs;
+ 
+     return &prefs.pr_IconObjs;
+@@ -146,10 +145,9 @@
+ {
+     struct IconObj *io;
+ 
+-    while (io = (APTR)RemHead(l))
+-    {
++    while (io = (APTR)RemHead(l)) {
+         FreeString(io->io_AppCmd);
+-        FreePooled(pool,io,sizeof(struct IconObj));
++        FreePooled(pool, io, sizeof(struct IconObj));
+     }
+ }
+ 
+@@ -159,8 +157,7 @@
+ {
+     struct IconObj *sio;
+ 
+-    if (sio = AllocPooled(pool,sizeof(struct IconObj)))
+-    {
++    if (sio = AllocPooled(pool,sizeof(struct IconObj))) {
+         sio->io_AppCmd = AllocString(io->io_AppCmd);
+         sio->io_Node.in_Name = sio->io_AppCmd;
+         sio->io_Node.in_Image = io->io_Node.in_Image;
+@@ -170,15 +167,14 @@
+ 
+ 
+ void
+-AddIconObj(struct MinList *list,struct AppCmd *ac,long pos)
++AddIconObj(struct MinList *list, struct AppCmd *ac, long pos)
+ {
+     struct IconObj *io;
+ 
+     if ((io = AllocPooled(pool,sizeof(struct IconObj))) == NULL)
+         return;
+ 
+-    if (ac)
+-    {
++    if (ac) {
+         io->io_AppCmd = AllocString(ac->ac_Node.in_Name);
+         io->io_Node.in_Name = io->io_AppCmd;
+     /*  if (!strcmp(io->io_AppCmd,"Leerfeld"))
+@@ -190,24 +186,24 @@
+ 
+ 
+ void
+-MakeMarkText(struct Page *page,STRPTR t)
++MakeMarkText(struct Page *page, STRPTR t)
+ {
+     struct Term *k;
+-    char   s[64];
++    char s[64];
+ 
+-    if (prefs.pr_Table->pt_Flags & PTF_MARKSUM)
+-        strcpy(s,"summe(");
++	// TODO: this is language specific!
++    if ((prefs.pr_Table->pt_Flags & PTF_MARKSUM) != 0)
++        strcpy(s, "summe(");
+     else
+-        strcpy(s,"mittelwert(");
+-    strcat(s,t);  strcat(s,")");
++        strcpy(s, "mittelwert(");
++    strcat(s, t);  strcat(s, ")");
+ 
+-    if (k = CreateTree(page,s))
+-    {
+-        strcat(t," (");
+-        if (prefs.pr_Table->pt_Flags & PTF_MARKAVERAGE)
+-            strcat(t,"? ");
+-        strcat(t,ita(TreeValue(k),-3,ITA_NONE));
+-        strcat(t,")");
++    if (k = CreateTree(page, s)) {
++        strcat(t, " (");
++        if ((prefs.pr_Table->pt_Flags & PTF_MARKAVERAGE) != 0)
++            strcat(t, "? ");
++        strcat(t, ita(TreeValue(k), -3, ITA_NONE));
++        strcat(t, ")");
+         DeleteTree(k);
+     }
+ }
+@@ -218,8 +214,8 @@
+ {
+     struct winData *wd;
+     struct tableField *tf;
+-    long   w = wd_PosWidth-4;
+-    char   t[64];
++    long w = wd_PosWidth - 4;
++    char t[64];
+ 
+     if (!page->pg_Mappe->mp_Prefs.pr_Disp->pd_FormBar || !page->pg_Window)
+         return;
+@@ -227,18 +223,17 @@
+     wd = (struct winData *)page->pg_Window->UserData;
+     itext.FrontPen = 1;
+     itext.ITextFont = scr->Font;
+-    EraseRect(page->pg_Window->RPort,10,wd->wd_FormY+5,9+w,wd->wd_FormY+fontheight+6);
++    EraseRect(page->pg_Window->RPort, 10, wd->wd_FormY + 5, 9 + w, wd->wd_FormY + fontheight + 6);
+ 
+-    if (page->pg_MarkCol == -1)
+-    {
++    if (page->pg_MarkCol == -1) {
+         struct Name *nm,*snm = NULL;
+ 
+         if (page->pg_Gad.DispPos == PGS_NONE)
+             return;
+-        foreach(&page->pg_Mappe->mp_Prefs.pr_Names,nm)
+-        {
+-            if (nm->nm_Node.ln_Type == NMT_CELL && nm->nm_Page == page && PosInTablePos(&nm->nm_TablePos,page->pg_Gad.cp.cp_Col,page->pg_Gad.cp.cp_Row))
+-            {
++        foreach (&page->pg_Mappe->mp_Prefs.pr_Names, nm) {
++            if (nm->nm_Node.ln_Type == NMT_CELL
++				&& nm->nm_Page == page
++				&& PosInTablePos(&nm->nm_TablePos, page->pg_Gad.cp.cp_Col, page->pg_Gad.cp.cp_Row)) {
+                 snm = nm;
+                 if (!nm->nm_TablePos.tp_Width && nm->nm_TablePos.tp_Height)
+                     break;
+@@ -247,63 +242,56 @@
+         if (snm)
+             itext.IText = snm->nm_Node.ln_Name;
+         else
+-            itext.IText = Coord2String(page->pg_Gad.cp.cp_Col,page->pg_Gad.cp.cp_Row);
+-    }
+-    else
+-    {
+-        strcpy(t,Coord2String(page->pg_MarkCol,page->pg_MarkRow));
+-        strcat(t,":");
+-        strcat(t,Coord2String(page->pg_MarkWidth != -1 ? page->pg_MarkCol+page->pg_MarkWidth : page->pg_Rows,page->pg_MarkHeight != -1 ? page->pg_MarkRow+page->pg_MarkHeight : page->pg_Rows));
++            itext.IText = Coord2String(page->pg_Gad.cp.cp_Col, page->pg_Gad.cp.cp_Row);
++    } else {
++        strcpy(t, Coord2String(page->pg_MarkCol, page->pg_MarkRow));
++        strcat(t, ":");
++        strcat(t, Coord2String(page->pg_MarkWidth != -1 ? page->pg_MarkCol + page->pg_MarkWidth : page->pg_Rows, page->pg_MarkHeight != -1 ? page->pg_MarkRow + page->pg_MarkHeight : page->pg_Rows));
+         if (prefs.pr_Table->pt_Flags & (PTF_MARKSUM | PTF_MARKAVERAGE))
+-            MakeMarkText(page,t);
++            MakeMarkText(page, t);
+         itext.IText = t;
+     }
+-    makeClip(page->pg_Window,10,wd->wd_FormY+5,w-1,fontheight+1);
+-    PrintIText(page->pg_Window->RPort,&itext,10+((w-IntuiTextLength(&itext))>>1),wd->wd_FormY+6);
++    makeClip(page->pg_Window, 10, wd->wd_FormY + 5, w - 1, fontheight + 1);
++    PrintIText(page->pg_Window->RPort, &itext, 10 + ((w - IntuiTextLength(&itext)) >> 1), wd->wd_FormY + 6);
+     freeClip(page->pg_Window);
+ 
+     {
+         STRPTR s = NULL;
+-        BOOL   disabled = FALSE;
++        BOOL disabled = FALSE;
+ 
+-        if (tf = GetTableField(page,page->pg_Gad.cp.cp_Col,page->pg_Gad.cp.cp_Row))
+-        {
++        if (tf = GetTableField(page, page->pg_Gad.cp.cp_Col, page->pg_Gad.cp.cp_Row)) {
+             if ((tf->tf_Flags & TFF_SECURITY) > TFF_STATIC)
+                 disabled = TRUE;
+             else
+                 s = tf->tf_Original;
+         }
+-        GT_SetGadgetAttrs(GadgetAddress(page->pg_Window,GID_FORM),page->pg_Window,NULL,GTST_String,s,GA_Disabled,disabled,TAG_END);
++        GT_SetGadgetAttrs(GadgetAddress(page->pg_Window, GID_FORM), page->pg_Window, NULL, GTST_String, s, GA_Disabled, disabled, TAG_END);
+     }
+ }
+ 
+ 
+ void
+-DrawIconBar(struct Prefs *pr,struct Window *win, struct winData *wd)
++DrawIconBar(struct Prefs *pr, struct Window *win, struct winData *wd)
+ {
+-    if (pr->pr_Disp->pd_IconBar == PDIB_TOP)
+-    {
+-        SetAPen(win->RPort,2);
+-        DrawDithRect(win->RPort,win->BorderLeft,wd->wd_IconY,win->Width-1-win->BorderRight,wd->wd_IconY-2+wd->wd_IconH);
+-        if (pr->pr_Disp->pd_ToolBar)
+-        {
+-            Move(win->RPort,win->BorderLeft,wd->wd_IconY+wd->wd_IconH);
+-            Draw(win->RPort,win->Width-1-win->BorderRight,wd->wd_IconY+wd->wd_IconH);
++    if (pr->pr_Disp->pd_IconBar == PDIB_TOP) {
++        SetAPen(win->RPort, 2);
++        DrawDithRect(win->RPort, win->BorderLeft, wd->wd_IconY, win->Width - 1 - win->BorderRight, wd->wd_IconY - 2 + wd->wd_IconH);
++        if (pr->pr_Disp->pd_ToolBar) {
++            Move(win->RPort, win->BorderLeft, wd->wd_IconY + wd->wd_IconH);
++            Draw(win->RPort, win->Width - 1 - win->BorderRight, wd->wd_IconY + wd->wd_IconH);
+         }
+-        SetAPen(win->RPort,1);
+-        Move(win->RPort,win->BorderLeft,wd->wd_IconY+wd->wd_IconH-1);
+-        Draw(win->RPort,win->Width-1-win->BorderRight,wd->wd_IconY+wd->wd_IconH-1);
++        SetAPen(win->RPort, 1);
++        Move(win->RPort, win->BorderLeft, wd->wd_IconY + wd->wd_IconH - 1);
++        Draw(win->RPort, win->Width - 1 - win->BorderRight, wd->wd_IconY + wd->wd_IconH - 1);
++    } else {
++        SetAPen(win->RPort, 2);
++        DrawDithRect(win->RPort, win->BorderLeft, wd->wd_IconY + 1, win->BorderLeft + wd->wd_IconW - 2, wd->wd_IconY + wd->wd_IconH);
++        Move(win->RPort, win->BorderLeft, wd->wd_IconY);
++        Draw(win->RPort, win->BorderLeft + wd->wd_IconW - 2, wd->wd_IconY);
++        SetAPen(win->RPort, 1);
++        Move(win->RPort, win->BorderLeft + wd->wd_IconW - 1, wd->wd_IconY);
++        Draw(win->RPort, win->BorderLeft + wd->wd_IconW - 1, wd->wd_IconY + wd->wd_IconH);
+     }
+-    else
+-    {
+-        SetAPen(win->RPort,2);
+-        DrawDithRect(win->RPort,win->BorderLeft,wd->wd_IconY+1,win->BorderLeft+wd->wd_IconW-2,wd->wd_IconY+wd->wd_IconH);
+-        Move(win->RPort,win->BorderLeft,wd->wd_IconY);
+-        Draw(win->RPort,win->BorderLeft+wd->wd_IconW-2,wd->wd_IconY);
+-        SetAPen(win->RPort,1);
+-        Move(win->RPort,win->BorderLeft+wd->wd_IconW-1,wd->wd_IconY);
+-        Draw(win->RPort,win->BorderLeft+wd->wd_IconW-1,wd->wd_IconY+wd->wd_IconH);
+-    }
+ }
+ 
+ 
+
+
+
+From axeld at pinc-software.de  Thu Dec 11 23:45:12 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Thu, 11 Dec 2008 23:45:12 +0100 CET
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <1229031804.11163.8.camel@bellodello>
+Message-ID: <50158817171-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > NewFontInfo() returns NULL. Can this be the problem?
+> > Maybe AROS's bullet library lacks some features.
+> Solved. It turned out that the OTAG fonts are stored in big endian.
+> 
+> Actual screenshot:
+> http://www.mazze-online.de/aros/pictures/ignition3.jpg
+
+Nice one! That really looks great already!
+
+I just took the time to install the commit mailing list (which will be 
+available in the next few hours, until then, commit messages will be 
+directed to this list).
+
+You know have write access - please subscribe to the commit mailing 
+list once it is available. Thanks for all the work you've spent 
+already!
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Fri Dec 12 10:28:20 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Fri, 12 Dec 2008 10:28:20 +0100 CET
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <50158817171-BeMail@zon>
+Message-ID: <737743565-BeMail@zon>
+
+"Axel D?rfler" <axeld at pinc-software.de> wrote:
+> You know have write access
+
+Of course that should read: You *now* have write access :-)
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Fri Dec 12 19:02:28 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 12 Dec 2008 19:02:28 +0100
+Subject: [Ignition-develop] AROS port: Can't enter text in cells
+In-Reply-To: <737743565-BeMail@zon>
+References: <737743565-BeMail@zon>
+Message-ID: <1229104948.8156.4.camel@bellodello>
+
+Am Freitag, den 12.12.2008, 10:28 +0100 schrieb Axel D?rfler:
+> "Axel D?rfler" <axeld at pinc-software.de> wrote:
+> > You know have write access
+> 
+> Of course that should read: You *now* have write access :-)
+> 
+> Bye,
+>    Axel.
+
+Thanks. I'll start tomorrow (maybe already this evening).
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Fri Dec 12 22:09:28 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Fri, 12 Dec 2008 22:09:28 +0100 CET
+Subject: [Ignition-develop] Commit Mailing List
+Message-ID: <42805091875-BeMail@zon>
+
+Hi there,
+
+I saw Matthias already subscribed himself, but I just wanted to note 
+that the commit list should now be fully functional.
+Of course, everyone interested can subscribe, it's just mandatory for 
+those with commit rights :-)
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Tue Dec 16 22:44:55 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Tue, 16 Dec 2008 22:44:55 +0100
+Subject: [Ignition-develop] Error()
+Message-ID: <1229463895.10009.3.camel@bellodello>
+
+Hi,
+
+iotype.h has this prototype:
+void   Error(STRPTR fmt,...);
+
+But AROS has in its dos.library an Error() function which is supposed to
+return the current error stream.
+
+Where is the Error function for Ignition defined? Can I just rename this
+function?
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Tue Dec 16 23:18:04 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 16 Dec 2008 23:18:04 +0100 CET
+Subject: [Ignition-develop] Error()
+In-Reply-To: <1229463895.10009.3.camel@bellodello>
+Message-ID: <49105833810-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> iotype.h has this prototype:
+> void   Error(STRPTR fmt,...);
+> 
+> But AROS has in its dos.library an Error() function which is supposed 
+> to
+> return the current error stream.
+> 
+> Where is the Error function for Ignition defined? Can I just rename 
+> this
+> function?
+
+It's an exported library function of ignition itself, and it's defined 
+in io.c, line 2420.
+Other than that, feel free to rename it, for example to IoError() or 
+ReportError(). Just not ErrorRequest(), as we might want to collect 
+them in the future, and show them all at once.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Dec 17 09:54:20 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 17 Dec 2008 09:54:20 +0100
+Subject: [Ignition-develop] Segment
+Message-ID: <1229504060.13953.7.camel@bellodello>
+
+Hi,
+
+the arguments for the segment initialization have different order. Which
+one should I use?
+
+io.c
+====
+initIOSegment(io, (APTR)((UBYTE *)io_functable + sizeof(io_functable)),
+    pool, DOSBase, SysBase, MathIeeeDoubBasBase, MathIeeeDoubTransBase,
+    UtilityBase, LocaleBase, MAKE_ID('I','G','N',0)))
+
+
+iotype.c
+========
+BOOL PUBLIC InitModule(REG(a6, struct ExecBase *execBase),
+    REG(a0, struct IOType *io), REG(a1, APTR table),
+    REG(a2, APTR mainpool), REG(a3, APTR dosBase),
+    REG(d0, APTR mathBase), REG(d1, APTR mathtransBase),
+    REG(d2, long magic), REG(d3, APTR utilityBase),
+    REG(d4, APTR localeBase))
+
+Regards,
+Matthias
+
+
+
+
+
+
+From mrustler at gmx.de  Wed Dec 17 10:03:13 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 17 Dec 2008 10:03:13 +0100
+Subject: [Ignition-develop] Sheets
+Message-ID: <1229504593.13953.11.camel@bellodello>
+
+Hi,
+
+can I move the contents of ignition/distribution/full/sheets to
+ignition/sheets?
+Sooner or later I need something to bite ;-)
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Wed Dec 17 10:15:53 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 17 Dec 2008 10:15:53 +0100 CET
+Subject: [Ignition-develop] Sheets
+In-Reply-To: <1229504593.13953.11.camel@bellodello>
+Message-ID: <744169621-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> can I move the contents of ignition/distribution/full/sheets to
+> ignition/sheets?
+> Sooner or later I need something to bite ;-)
+
+Why would you want to do that, I can't really follow you?
+The sheets in the distribution folder are supposed to be added to the 
+final distributions, while the ones in "sheets" should be mostly stuff 
+that isn't there yet (ready to be included in the distribution), or to 
+test specific functionality.
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Wed Dec 17 10:17:31 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 17 Dec 2008 10:17:31 +0100 CET
+Subject: [Ignition-develop] Segment
+In-Reply-To: <1229504060.13953.7.camel@bellodello>
+Message-ID: <842024891-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> the arguments for the segment initialization have different order. 
+> Which
+> one should I use?
+> 
+> io.c
+> ====
+> initIOSegment(io, (APTR)((UBYTE *)io_functable + 
+> sizeof(io_functable)),
+>     pool, DOSBase, SysBase, MathIeeeDoubBasBase, 
+> MathIeeeDoubTransBase,
+>     UtilityBase, LocaleBase, MAKE_ID('I','G','N',0)))
+> 
+> 
+> iotype.c
+> ========
+> BOOL PUBLIC InitModule(REG(a6, struct ExecBase *execBase),
+>     REG(a0, struct IOType *io), REG(a1, APTR table),
+>     REG(a2, APTR mainpool), REG(a3, APTR dosBase),
+>     REG(d0, APTR mathBase), REG(d1, APTR mathtransBase),
+>     REG(d2, long magic), REG(d3, APTR utilityBase),
+>     REG(d4, APTR localeBase))
+
+It doesn't really matter, just follow your instincts ;-)
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Dec 17 10:35:03 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 17 Dec 2008 10:35:03 +0100
+Subject: [Ignition-develop] Sheets
+In-Reply-To: <744169621-BeMail@zon>
+References: <744169621-BeMail@zon>
+Message-ID: <1229506503.8153.3.camel@bellodello>
+
+Am Mittwoch, den 17.12.2008, 10:15 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > can I move the contents of ignition/distribution/full/sheets to
+> > ignition/sheets?
+> > Sooner or later I need something to bite ;-)
+> 
+> Why would you want to do that, I can't really follow you?
+> The sheets in the distribution folder are supposed to be added to the 
+> final distributions, while the ones in "sheets" should be mostly stuff 
+> that isn't there yet (ready to be included in the distribution), or to 
+> test specific functionality.
+
+The AROS buildsystem acts somewhat as an installer and copies things to
+their place. Of course, I can copy the sheets from the distribution
+directory. (only to have something to test)
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Wed Dec 17 12:46:54 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 17 Dec 2008 12:46:54 +0100 CET
+Subject: [Ignition-develop] Sheets
+In-Reply-To: <1229506503.8153.3.camel@bellodello>
+Message-ID: <9805047709-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Mittwoch, den 17.12.2008, 10:15 +0100 schrieb Axel D?rfler:
+> > Matthias Rustler <mrustler at gmx.de> wrote:
+> > > can I move the contents of ignition/distribution/full/sheets to
+> > > ignition/sheets?
+> > > Sooner or later I need something to bite ;-)
+> > Why would you want to do that, I can't really follow you?
+> > The sheets in the distribution folder are supposed to be added to 
+> > the 
+> > final distributions, while the ones in "sheets" should be mostly 
+> > stuff 
+> > that isn't there yet (ready to be included in the distribution), or 
+> > to 
+> > test specific functionality.
+> The AROS buildsystem acts somewhat as an installer and copies things 
+> to
+> their place. Of course, I can copy the sheets from the distribution
+> directory. (only to have something to test)
+
+Hm, and the AROS build system always does that?
+Usually there is a distinctive difference between "make" and "make 
+install". In any case, only the files in the distribution folder should 
+be installed (same for config/docs/etc.).
+The distribution makefiles could be simplified a lot, I guess, though, 
+since they still carry the weight of different distributions that make 
+no sense anymore (full/lite/demo).
+
+I wonder why you can't just open a sheet from a different location, 
+though :-)
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Dec 17 23:01:45 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 17 Dec 2008 23:01:45 +0100
+Subject: [Ignition-develop] Sheets
+In-Reply-To: <9805047709-BeMail@zon>
+References: <9805047709-BeMail@zon>
+Message-ID: <1229551305.11550.7.camel@bellodello>
+
+Am Mittwoch, den 17.12.2008, 12:46 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > Am Mittwoch, den 17.12.2008, 10:15 +0100 schrieb Axel D?rfler:
+> > > Matthias Rustler <mrustler at gmx.de> wrote:
+> > > > can I move the contents of ignition/distribution/full/sheets to
+> > > > ignition/sheets?
+> > > > Sooner or later I need something to bite ;-)
+> > > Why would you want to do that, I can't really follow you?
+> > > The sheets in the distribution folder are supposed to be added to 
+> > > the 
+> > > final distributions, while the ones in "sheets" should be mostly 
+> > > stuff 
+> > > that isn't there yet (ready to be included in the distribution), or 
+> > > to 
+> > > test specific functionality.
+> > The AROS buildsystem acts somewhat as an installer and copies things 
+> > to
+> > their place. Of course, I can copy the sheets from the distribution
+> > directory. (only to have something to test)
+> 
+> Hm, and the AROS build system always does that?
+
+Many build macros have a targetdir option. It's not like with usual
+makefiles where the generated files appear first in the source tree.
+
+> Usually there is a distinctive difference between "make" and "make 
+> install". In any case, only the files in the distribution folder should 
+> be installed (same for config/docs/etc.).
+
+As a temporary solution I'm now copying some sheets from the
+distribution directory (this doesn't change the location of the files in
+the SVN).
+
+> The distribution makefiles could be simplified a lot, I guess, though, 
+> since they still carry the weight of different distributions that make 
+> no sense anymore (full/lite/demo).
+
+I think it'll take some time until we can think about a distribution ;-)
+
+> I wonder why you can't just open a sheet from a different location, 
+> though :-)
+
+I'm cross-building from Linux. The source and the generated files are at
+different places.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Sat Dec 20 18:33:25 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sat, 20 Dec 2008 18:33:25 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+Message-ID: <1229794405.23012.9.camel@bellodello>
+
+Hi,
+
+I've crashes with the Area functions because of RastPort beeing NULL.
+
+Looking at graphics.h
+#define gAreaMove(rp,x,y) SafeAreaDraw(x,y)
+#define gAreaDraw(rp,x,y) SafeAreaDraw(x,y)
+
+The Safe... functions are ommitting the rp argument. Another strange
+thing is that both macros are implemented with SafeAreaDraw.
+
+
+This is how it looks currently for AROS:
+#define gAreaMove(rp,x,y) AreaMove(rp,x,y)
+#define gAreaDraw(rp,x,y) AreaDraw(rp,x,y)
+
+This fails because the functions are called sometimes with a NULL for
+the first argument.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Sat Dec 20 19:11:37 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sat, 20 Dec 2008 19:11:37 +0100
+Subject: [Ignition-develop] External classes are working
+Message-ID: <1229796697.23349.4.camel@bellodello>
+
+Hi,
+
+Current screenshot.
+http://www.mazze-online.de/aros/pictures/ignition4.jpg
+Line diagrams are working. As written in another mail I've troubles when
+Area functions are involved.
+
+I've implemented the classes with function pointers. I've no clue about
+this ELF thingy. If you tell we what's exactly needed for the
+implementation I can ask around at the AROS developer mailing list.
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Sun Dec 21 13:54:01 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Sun, 21 Dec 2008 13:54:01 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229794405.23012.9.camel@bellodello>
+Message-ID: <1124546258-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> I've crashes with the Area functions because of RastPort beeing NULL.
+> 
+> Looking at graphics.h
+> #define gAreaMove(rp,x,y) SafeAreaDraw(x,y)
+> #define gAreaDraw(rp,x,y) SafeAreaDraw(x,y)
+> 
+> The Safe... functions are ommitting the rp argument. Another strange
+> thing is that both macros are implemented with SafeAreaDraw.
+
+IIRC the first draw is always regarded as move. At least I definitely 
+works under AmigaOS ;-)
+
+> This is how it looks currently for AROS:
+> #define gAreaMove(rp,x,y) AreaMove(rp,x,y)
+> #define gAreaDraw(rp,x,y) AreaDraw(rp,x,y)
+> 
+> This fails because the functions are called sometimes with a NULL for
+> the first argument.
+
+Which doesn't really make sense, and was probably just a hidden bug 
+before.
+Can you pin down under which circumstances this happens?
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Sun Dec 21 13:59:50 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Sun, 21 Dec 2008 13:59:50 +0100 CET
+Subject: [Ignition-develop] External classes are working
+In-Reply-To: <1229796697.23349.4.camel@bellodello>
+Message-ID: <1473498773-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Current screenshot.
+> http://www.mazze-online.de/aros/pictures/ignition4.jpg
+> Line diagrams are working. As written in another mail I've troubles 
+> when
+> Area functions are involved.
+
+Nice one!
+
+> I've implemented the classes with function pointers. I've no clue 
+> about
+> this ELF thingy. If you tell we what's exactly needed for the
+> implementation I can ask around at the AROS developer mailing list.
+
+You could ask on the developer list if the ELF reader could be made 
+available for applications to load their add-ons. Then we could just 
+link the add-ons against ignition, and wouldn't need to care about the 
+function pointers at all (for all ELF platforms, that is, AmigaOS would 
+still need the current or the previous solution).
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Sun Dec 21 15:39:41 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sun, 21 Dec 2008 15:39:41 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1124546258-BeMail@zon>
+References: <1124546258-BeMail@zon>
+Message-ID: <1229870381.26464.3.camel@bellodello>
+
+Am Sonntag, den 21.12.2008, 13:54 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > This fails because the functions are called sometimes with a NULL for
+> > the first argument.
+> 
+> Which doesn't really make sense, and was probably just a hidden bug 
+> before.
+> Can you pin down under which circumstances this happens?
+
+When trying to create an Area diagram:
+
+#0  0x08077507 in Graphics_AreaMove (rp=0x0, x=184, y=467, GfxBase=0xb5e36a94) at areamove.c:62
+#1  0xb649e6f3 in libAreaMove (x=184, y=467) at graphic.c:43
+#2  0xb67b114e in draw (page=0xb66b0b30, dpi=5898331, rp=0xb6445170, gc=0xb6444a00, gd=0xb66b2fa8, gb=0xb61c2b64) at area_diagram.c:163
+#3  0xb646da54 in gEmbeddedDraw (page=0xb66b0b30, dpi=5898331, rp=0xb6445170, gc=0xb6444560, go=0xb66b2ce8, gb=0xb61c2b64) at classes.c:806
+#4  0xb64d50d3 in gSuperDraw (page=0xb66b0b30, dpi=5898331, rp=0xb6445170, gc=0xb64445a0, go=0xb66b2ce8, gb=0xb61c2b64) at objects.c:108
+#5  0xb6482b27 in gEmbedDiagramDraw (page=0xb66b0b30, dpi=5898331, rp=0xb6445170, gc=0xb64445a0, gd=0xb66b2ce8, gb=0xb61c2b64) at diagram.c:1643
+#6  0xb64d5250 in DrawGObject (rp=0xb6445170, page=0xb66b0b30, go=0xb66b2ce8, x=144, y=120) at objects.c:168
+#7  0xb651a2d3 in DrawTableRegion (win=0xb6697ef8, page=0xb66b0b30, refresh=0xb61c2d3c, vertgads=0, horizgads=0) at table.c:1269
+#8  0xb651a9e2 in DrawTableCoord (page=0xb66b0b30, x1=144, y1=120, x2=504, y2=481) at table.c:1379
+#9  0xb64d7b16 in AddGObject (page=0xb66b0b30, gg=0x0, go=0xb66b2ce8, flags=1 '\001') at objects.c:1225
+#10 0xb64d63b8 in gMakeRefObject (page=0xb66b0b30, gc=0xb64445a0, go=0xb66b2fa8, undoText=0xb65acca9 "Diagramm erstellen") at objects.c:688
+#11 0xb6484506 in HandleDiagramIDCMP (tag=0x0) at diagram.c:2206
+#12 0xb64c528b in HandleApp () at ignition.c:2245
+#13 0xb64c61ee in main (argc=1, argv=0xb5ead3a0) at ignition.c:2560
+
+libAreaMove doesn't have a RastPort argument and calls gAreaMove with a
+NULL:
+
+void PUBLIC
+libAreaMove(REG(d0, LONG x), REG(d1, LONG y))
+{
+        gAreaMove(NULL, x, y);
+}
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Sun Dec 21 21:53:57 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sun, 21 Dec 2008 21:53:57 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229870381.26464.3.camel@bellodello>
+References: <1124546258-BeMail@zon>  <1229870381.26464.3.camel@bellodello>
+Message-ID: <1229892837.12581.5.camel@bellodello>
+
+Am Sonntag, den 21.12.2008, 15:39 +0100 schrieb Matthias Rustler:
+
+> libAreaMove doesn't have a RastPort argument and calls gAreaMove with a
+> NULL:
+> 
+> void PUBLIC
+> libAreaMove(REG(d0, LONG x), REG(d1, LONG y))
+> {
+>         gAreaMove(NULL, x, y);
+> }
+
+I've solved this by adding a rastport argument to both libAreaMove and
+libAreaDraw.
+
+But:
+	MakeTmpRas(800, 600);
+
+800x600 isn't that much and there is nothing which prevents diagrams
+from becoming larger. When I'm trying to create 3D-Diagrams I'm getting
+already graphics corruption with smaller diagrams.
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Mon Dec 22 11:08:42 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Mon, 22 Dec 2008 11:08:42 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229892837.12581.5.camel@bellodello>
+Message-ID: <3284795423-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Sonntag, den 21.12.2008, 15:39 +0100 schrieb Matthias Rustler:
+> > libAreaMove doesn't have a RastPort argument and calls gAreaMove 
+> > with a
+> > NULL:
+> > 
+> > void PUBLIC
+> > libAreaMove(REG(d0, LONG x), REG(d1, LONG y))
+> > {
+> >         gAreaMove(NULL, x, y);
+> > }
+> I've solved this by adding a rastport argument to both libAreaMove 
+> and
+> libAreaDraw.
+
+Fine. IIRC SafeClip would buffer all area commands until the final 
+AreaEnd() call anyway, so it did not bother which RastPort it had to 
+draw to.
+
+> But:
+> 	MakeTmpRas(800, 600);
+> 
+> 800x600 isn't that much and there is nothing which prevents diagrams
+> from becoming larger. When I'm trying to create 3D-Diagrams I'm 
+> getting
+> already graphics corruption with smaller diagrams.
+
+You could try enlarging this when the screen size changes. I am not 
+sure why it's not maintained, but there was a reason; maybe SafeClip 
+did not depend on it. At least I definitely used ignition with higher 
+screen resolutions without any problems.
+
+I also don't know how it's implemented in AROS - those functions aren't 
+exactly getting much use in normal apps :-)
+
+IIRC the TmpRas was only being used by the blitter to create the area 
+fill. Maybe it just wasn't used anymore with graphics cards, and maybe 
+that's why it always worked for me.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Mon Dec 22 11:55:30 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 22 Dec 2008 11:55:30 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <3284795423-BeMail@zon>
+References: <3284795423-BeMail@zon>
+Message-ID: <1229943330.19917.5.camel@bellodello>
+
+Am Montag, den 22.12.2008, 11:08 +0100 schrieb Axel D?rfler:
+
+> You could try enlarging this when the screen size changes. I am not 
+> sure why it's not maintained, but there was a reason; maybe SafeClip 
+> did not depend on it. At least I definitely used ignition with higher 
+> screen resolutions without any problems.
+> 
+> I also don't know how it's implemented in AROS - those functions aren't 
+> exactly getting much use in normal apps :-)
+> 
+> IIRC the TmpRas was only being used by the blitter to create the area 
+> fill. Maybe it just wasn't used anymore with graphics cards, and maybe 
+> that's why it always worked for me.
+
+I think I understand how this SafeClip feature works:
+SafeAreaDraw stores only the coordinates somewhere. When the coordinates
+are larger than the limits then the limits are extended.
+
+SafeAreaEnd ist the only function which has a RastPort pointer. When
+this function is called the TmpRas is created with the limits from the
+SafeAreaDraw calls. Then the real AreaDrawing is done.
+
+I guess that the TmpRas created by Ignition isn't used at all.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Mon Dec 22 12:11:38 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 22 Dec 2008 12:11:38 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229943330.19917.5.camel@bellodello>
+References: <3284795423-BeMail@zon>  <1229943330.19917.5.camel@bellodello>
+Message-ID: <1229944298.19917.7.camel@bellodello>
+
+Am Montag, den 22.12.2008, 11:55 +0100 schrieb Matthias Rustler:
+
+> I think I understand how this SafeClip feature works:
+> SafeAreaDraw stores only the coordinates somewhere. When the coordinates
+> are larger than the limits then the limits are extended.
+> 
+> SafeAreaEnd ist the only function which has a RastPort pointer. When
+> this function is called the TmpRas is created with the limits from the
+> SafeAreaDraw calls. Then the real AreaDrawing is done.
+> 
+> I guess that the TmpRas created by Ignition isn't used at all.
+
+:-)
+
+http://aminet.net/package/gfx/misc/SafeClip
+
+
+
+From axeld at pinc-software.de  Mon Dec 22 14:53:32 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Mon, 22 Dec 2008 14:53:32 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229944298.19917.7.camel@bellodello>
+Message-ID: <16774879551-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Montag, den 22.12.2008, 11:55 +0100 schrieb Matthias Rustler:
+> > I think I understand how this SafeClip feature works:
+> > SafeAreaDraw stores only the coordinates somewhere. When the 
+> > coordinates
+> > are larger than the limits then the limits are extended.
+> > 
+> > SafeAreaEnd ist the only function which has a RastPort pointer. 
+> > When
+> > this function is called the TmpRas is created with the limits from 
+> > the
+> > SafeAreaDraw calls. Then the real AreaDrawing is done.
+> > 
+> > I guess that the TmpRas created by Ignition isn't used at all.
+> :-)
+> 
+> http://aminet.net/package/gfx/misc/SafeClip
+
+Oh, cool :-)
+I think the version I used with ignition didn't come with source - must 
+be older than 1996 then.
+Including that one should solve the issue; adding the RastPort is a 
+good change however, in case other systems don't need something like 
+SafeClip.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Mon Dec 22 15:02:13 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 22 Dec 2008 15:02:13 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <3284795423-BeMail@zon>
+References: <3284795423-BeMail@zon>
+Message-ID: <1229954533.5480.5.camel@bellodello>
+
+Am Montag, den 22.12.2008, 11:08 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+
+> > 800x600 isn't that much and there is nothing which prevents diagrams
+> > from becoming larger. When I'm trying to create 3D-Diagrams I'm 
+> > getting
+> > already graphics corruption with smaller diagrams.
+> 
+> You could try enlarging this when the screen size changes. I am not 
+> sure why it's not maintained, but there was a reason; maybe SafeClip 
+> did not depend on it. At least I definitely used ignition with higher 
+> screen resolutions without any problems.
+> 
+> I also don't know how it's implemented in AROS - those functions aren't 
+> exactly getting much use in normal apps :-)
+> 
+> IIRC the TmpRas was only being used by the blitter to create the area 
+> fill. Maybe it just wasn't used anymore with graphics cards, and maybe 
+> that's why it always worked for me.
+
+I've examined the source of safeclip. It doesn't create a TmpRas. I
+think your graphics driver creates a TmpRas on the fly. AROS simply
+doesn't draw areas when rp->TmpRas is NULL.
+
+But safeclip uses the CLP... limits for clipping. So the limits of
+800x600 should't be violated. (I'm not 100% sure because this is done in
+assembler code.)
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Tue Dec 23 06:15:31 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Tue, 23 Dec 2008 06:15:31 +0100
+Subject: [Ignition-develop] Crash during saving file
+Message-ID: <1230009331.21743.11.camel@bellodello>
+
+Hi,
+
+I get a crash when I try to save a file.
+
+Backtrace:
+#0  0xb7e7dd28 in strcmp () from /lib/tls/i686/cmov/libc.so.6
+#1  0x0804f821 in Exec_FindName (list=0xb5ea0d8c, name=0xb6778050 "0")
+at findname.c:77
+#2  0xb65cb98f in SaveProject (mp=0xb6776370, io=0xb650a300,
+confirmOverwrite=1) at io.c:2896
+#3  0xb66052c1 in rxSave (opts=0xb64d706c) at rexx.c:2649
+#4  0xb656f3b5 in processIntCmd (t=0xb6778538 "SAVE") at cmd.c:526
+#5  0xb656f648 in ProcessAppCmd (page=0xb67770f0, t=0xb676fa88
+"Projekt/speichern") at cmd.c:580
+#6  0xb65cefce in HandleMenu () at menu.c:527
+#7  0xb65c0306 in HandleApp () at ignition.c:2217
+#8  0xb65c145e in main (argc=1, argv=0xb5e9ca68) at ignition.c:2560
+
+Crash happens in
+if (tf->tf_Format && !MyFindName(&io_fvs, tf->tf_Format))
+because Nodes are corrupt.
+
+I've attached a screenshot where you can see that second node has a
+wrong ln_Name pointer. (screenshot was made in a different debugger run,
+so the addresses differ).
+
+The different order of struct Node on AROS shouldn't matter, as
+FormatVorlage is defined like:
+
+struct FormatVorlage {
+	struct Node fv_Node;
+	STRPTR fv_Preview;
+	...
+
+I hope you can help.
+
+
+Regards,
+Matthias
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ign-segfault-formats.jpg
+Type: image/jpeg
+Size: 42745 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/ignition-develop/attachments/20081223/fe31beab/attachment.jpg>
+
+From axeld at pinc-software.de  Tue Dec 23 22:33:32 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 23 Dec 2008 22:33:32 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1229954533.5480.5.camel@bellodello>
+Message-ID: <33471813944-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > IIRC the TmpRas was only being used by the blitter to create the 
+> > area 
+> > fill. Maybe it just wasn't used anymore with graphics cards, and 
+> > maybe 
+> > that's why it always worked for me.
+> I've examined the source of safeclip. It doesn't create a TmpRas. I
+> think your graphics driver creates a TmpRas on the fly. AROS simply
+> doesn't draw areas when rp->TmpRas is NULL.
+> 
+> But safeclip uses the CLP... limits for clipping. So the limits of
+> 800x600 should't be violated. (I'm not 100% sure because this is done 
+> in
+> assembler code.)
+
+Still strange that it manages to create correct graphics with higher 
+resolutions, then, or am I missing something?
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Tue Dec 23 23:42:06 2008
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 23 Dec 2008 23:42:06 +0100 CET
+Subject: [Ignition-develop] Crash during saving file
+In-Reply-To: <1230009331.21743.11.camel@bellodello>
+Message-ID: <37585493605-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Crash happens in
+> if (tf->tf_Format && !MyFindName(&io_fvs, tf->tf_Format))
+> because Nodes are corrupt.
+> 
+> I've attached a screenshot where you can see that second node has a
+> wrong ln_Name pointer. (screenshot was made in a different debugger 
+> run,
+> so the addresses differ).
+> 
+> The different order of struct Node on AROS shouldn't matter, as
+> FormatVorlage is defined like:
+[...]
+> I hope you can help.
+
+Sorry, I haven't found the time to do so today, and I definitely won't 
+find the time to do so in the next few days.
+I will try to setup AROS over here, so I can better test this, but that 
+might take some time, hopefully this year.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Dec 24 10:50:34 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 24 Dec 2008 10:50:34 +0100
+Subject: [Ignition-develop] Crash during saving file
+In-Reply-To: <37585493605-BeMail@zon>
+References: <37585493605-BeMail@zon>
+Message-ID: <1230112234.23826.1.camel@bellodello>
+
+Am Dienstag, den 23.12.2008, 23:42 +0100 schrieb Axel D?rfler:
+
+> I will try to setup AROS over here, so I can better test this, but that 
+> might take some time, hopefully this year.
+
+That would be really helpful ;-)
+
+BTW: did you see my bug reports?
+http://developer.berlios.de/bugs/?group_id=8642
+
+Happy Christmas,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Fri Dec 26 14:30:49 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 26 Dec 2008 14:30:49 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <33471813944-BeMail@zon>
+References: <33471813944-BeMail@zon>
+Message-ID: <1230298249.4468.5.camel@bellodello>
+
+Am Dienstag, den 23.12.2008, 22:33 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > > IIRC the TmpRas was only being used by the blitter to create the 
+> > > area 
+> > > fill. Maybe it just wasn't used anymore with graphics cards, and 
+> > > maybe 
+> > > that's why it always worked for me.
+> > I've examined the source of safeclip. It doesn't create a TmpRas. I
+> > think your graphics driver creates a TmpRas on the fly. AROS simply
+> > doesn't draw areas when rp->TmpRas is NULL.
+> > 
+> > But safeclip uses the CLP... limits for clipping. So the limits of
+> > 800x600 should't be violated. (I'm not 100% sure because this is done 
+> > in
+> > assembler code.)
+> 
+> Still strange that it manages to create correct graphics with higher 
+> resolutions, then, or am I missing something?
+
+OpenAppScreen calls MakeTempRas which calls gInitArea. This sets the new
+limits to the Screen size.
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Fri Dec 26 17:12:51 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 26 Dec 2008 17:12:51 +0100
+Subject: [Ignition-develop] Segfault in diagram preview
+Message-ID: <1230307971.4468.16.camel@bellodello>
+
+Hi,
+
+When diagram type "Lines" is selected with option "Pseudo 3d".
+After clicking on "Preview" I get a segfault with this backtrace:
+
+#0  0xb65ba189 in pixel (page=0x0, mm=2560, width=1) at table.c:765
+#1  0xb6866a6f in draw (page=0x0, dpi=5898331, rp=0xb649f3f8,
+gc=0xb649ee60, gd=0xb670e8f0, gb=0xb647e5a8) at line_diagram.c:66
+#2  0xb65c5257 in RefreshAppWindow (win=0xb6865920, wd=0xb670ea18) at
+windows.c:1177
+#3  0xb65c889f in OpenAppWindow (type=37, tag1=2147484651) at
+windows.c:1815
+#4  0xb6526a99 in HandleDiagramIDCMP (tag=0x0) at diagram.c:2213
+#5  0xb65676cb in HandleApp () at ignition.c:2245
+#6  0xb656862e in main (argc=1, argv=0xb5e41378) at ignition.c:2560
+
+Crash happens because page is NULL in:
+return (long)(mm * page->pg_SizeFactorX + 0.5);
+
+But in frame #1 "draw" is indentionally called with NULL for the page
+parameter.
+
+This happens only with the Lines diagram.
+
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Fri Dec 26 17:22:21 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 26 Dec 2008 17:22:21 +0100
+Subject: [Ignition-develop] Segfault when entering a function without a
+	parameter
+Message-ID: <1230308541.4468.23.camel@bellodello>
+
+Hi,
+
+when I enter a function without giving a parameter (e.g. "=abs()"), I
+get a segfault:
+
+#0  0xb65e2737 in AddReferences (r=0xb674b4f8, t=0xb674b358) at
+reference.c:509
+#1  0xb65e2880 in UpdateReferences (r=0xb674b4f8, t=0xb674b358) at
+reference.c:594
+#2  0xb65e2b2a in MakeReference (page=0xb674a078, type=1 '\001',
+this=0xb674a888, t=0xb674b358) at reference.c:692
+#3  0xb654b66c in UpdateCellText (page=0xb674a078, tf=0xb674a888) at
+cell.c:613
+#4  0xb6564a8a in WriteTabGadget (page=0xb674a078, un=0xb674b2e8) at
+edit.c:234
+#5  0xb6565331 in FreeTabGadget (page=0xb674a078) at edit.c:437
+#6  0xb6566a5d in CreateTabGadget (page=0xb674a078, col=1, row=1,
+makevisible=1) at edit.c:845
+#7  0xb65dea2d in HandleBars () at project.c:1475
+#8  0xb65dfa3d in handleProjIDCMP (tags=0x0) at project.c:1731
+#9  0xb65a4c0b in HandleApp () at ignition.c:2245
+#10 0xb65a5b6e in main (argc=1, argv=0xb5e7e3d0) at ignition.c:2560
+
+
+Crash happens because f is 0xffffffff in:
+  switch (f->f_ID)
+
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Fri Dec 26 17:42:07 2008
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 26 Dec 2008 17:42:07 +0100
+Subject: [Ignition-develop] Clicking on Checkbox object causes recursion
+Message-ID: <1230309727.4468.30.camel@bellodello>
+
+Hi,
+
+clicking on checkbox gadget in interactive mode causes endless
+backtrace. (On AROS, with the 68k release I don't have this problem.)
+
+Regards,
+Matthias
+
+
+
+

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] AROS port
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20AROS%20port&In-Reply-To=%3C1228255513.24742.16.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000007.html">
+   <LINK REL="Next"  HREF="000010.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] AROS port</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20AROS%20port&In-Reply-To=%3C1228255513.24742.16.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] AROS port">mrustler at gmx.de
+       </A><BR>
+    <I>Tue Dec  2 23:05:13 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000007.html">[Ignition-develop] Porting Ignition
+</A></li>
+        <LI>Next message: <A HREF="000010.html">[Ignition-develop] AROS port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Am Montag, den 01.12.2008, 10:34 +0100 schrieb Axel D&#246;rfler:
+&gt;<i> Matthias Rustler &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/ignition-develop">mrustler at gmx.de</A>&gt; wrote:
+</I>&gt;<i> &gt; I've managed to build Ignition on AROS. This is what I get before it
+</I>&gt;<i> &gt; crashes.
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; <A HREF="http://www.mazze-online.de/aros/pictures/ignition.jpg">http://www.mazze-online.de/aros/pictures/ignition.jpg</A>
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; Bugfixing time ;-)
+</I>&gt;<i> 
+</I>&gt;<i> Nice! The class loader is exactly the part you wanted to comment out at 
+</I>&gt;<i> first, just in case the crash happens there :-)
+</I>&gt;<i> 
+</I>&gt;<i> Bye,
+</I>&gt;<i>    Axel.
+</I>
+Here is the backtrace:
+
+#0  0xb7e69d28 in strcmp () from /lib/tls/i686/cmov/libc.so.6
+#1  0x0804f821 in Exec_FindName (list=0xb5e8d3b8, name=0xb6517ecc &quot;icons/obj_pic.icon&quot;) at findname.c:77
+#2  0xb649b57a in LoadImage (t=0xb6517ecc &quot;icons/obj_pic.icon&quot;) at images.c:139
+#3  0xb6444243 in MakeGClass (name=0xb6517e8c &quot;picture&quot;, type=34 '&quot;', sgc=0xb5f18bf0, label=0xb65c95c3 &quot;Bild&quot;, image=0xb6517ecc &quot;icons/obj_pic.icon&quot;, dispatch=0xb6443d81, draw=0xb64438b4, gi=0xb5f15e80, objsize=28) at classes.c:1351
+#4  0xb64445d8 in InitGClasses () at classes.c:1471
+#5  0xb6473d6d in InitGraphics () at graphic.c:242
+#6  0xb6498abd in InitApp () at ignition.c:1925
+#7  0xb649abb1 in main (argc=1, argv=0xb5e85070) at ignition.c:2562
+
+MyFindName is called like:
+if ((io = (struct ImageObj *)MyFindName((struct List *)&amp;images, t))) {
+
+ln_name seams to contain corrupt data:
+(gdb) print *(struct Node*)&amp;images
+$20 = {ln_Succ = 0xb5f18718, ln_Pred = 0x0, ln_Name = 0xb5f18738 &quot;&#188;&#211;&#232;&#181;
+\030\207&#241;&#181;\001&quot;, ln_Type = 0 '\0', ln_Pri = 0 '\0'}
+
+Any idea?
+
+Regards,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000007.html">[Ignition-develop] Porting Ignition
+</A></li>
+	<LI>Next message: <A HREF="000010.html">[Ignition-develop] AROS port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

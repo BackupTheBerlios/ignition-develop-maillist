@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Segment
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segment&In-Reply-To=%3C1229504060.13953.7.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000024.html">
+   <LINK REL="Next"  HREF="000028.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Segment</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segment&In-Reply-To=%3C1229504060.13953.7.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Segment">mrustler at gmx.de
+       </A><BR>
+    <I>Wed Dec 17 09:54:20 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000024.html">[Ignition-develop] Error()
+</A></li>
+        <LI>Next message: <A HREF="000028.html">[Ignition-develop] Segment
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#25">[ date ]</a>
+              <a href="thread.html#25">[ thread ]</a>
+              <a href="subject.html#25">[ subject ]</a>
+              <a href="author.html#25">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+the arguments for the segment initialization have different order. Which
+one should I use?
+
+io.c
+====
+initIOSegment(io, (APTR)((UBYTE *)io_functable + sizeof(io_functable)),
+    pool, DOSBase, SysBase, MathIeeeDoubBasBase, MathIeeeDoubTransBase,
+    UtilityBase, LocaleBase, MAKE_ID('I','G','N',0)))
+
+
+iotype.c
+========
+BOOL PUBLIC InitModule(REG(a6, struct ExecBase *execBase),
+    REG(a0, struct IOType *io), REG(a1, APTR table),
+    REG(a2, APTR mainpool), REG(a3, APTR dosBase),
+    REG(d0, APTR mathBase), REG(d1, APTR mathtransBase),
+    REG(d2, long magic), REG(d3, APTR utilityBase),
+    REG(d4, APTR localeBase))
+
+Regards,
+Matthias
+
+
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000024.html">[Ignition-develop] Error()
+</A></li>
+	<LI>Next message: <A HREF="000028.html">[Ignition-develop] Segment
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#25">[ date ]</a>
+              <a href="thread.html#25">[ thread ]</a>
+              <a href="subject.html#25">[ subject ]</a>
+              <a href="author.html#25">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

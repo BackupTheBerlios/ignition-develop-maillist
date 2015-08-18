@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Porting Ignition
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-November/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1227657417.9071.18.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000001.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Porting Ignition</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1227657417.9071.18.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Porting Ignition">mrustler at gmx.de
+       </A><BR>
+    <I>Wed Nov 26 00:56:57 CET 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000001.html">[Ignition-develop] Porting Ignition
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+one of the development goals of Ignition is to port it to different
+AmigaOS flavours. There is a macro set which has support for:
+-Classic AmigaOS, AOS4, Morphos
+-GNUC, SAS/C, vbcc, STORM, Maxon
+-Libraries, Hooks, Interrupts, Variadic functions
+
+<A HREF="http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/">http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/</A>
+
+Unfortunately, it doesn't fully support AROS. AROS has its own
+compatibility macro set which has a different principle. The macros for
+library and hook functions contain the number of the arguments in their
+name. And the functions must be wrapped in
+AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+
+Therefor it's easier to define a new macro set which expands to AROS and
+SDI.
+
+Regards,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000001.html">[Ignition-develop] Porting Ignition
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

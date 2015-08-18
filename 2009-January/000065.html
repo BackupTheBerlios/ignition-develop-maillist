@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] struct Node
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2009-January/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20struct%20Node&In-Reply-To=%3C1233009231.16854.8.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000064.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] struct Node</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20struct%20Node&In-Reply-To=%3C1233009231.16854.8.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] struct Node">mrustler at gmx.de
+       </A><BR>
+    <I>Mon Jan 26 23:33:51 CET 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000064.html">[Ignition-develop] struct Node
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Am Sonntag, den 25.01.2009, 19:07 +0100 schrieb Axel D&#246;rfler:
+&gt;<i> Matthias Rustler &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/ignition-develop">mrustler at gmx.de</A>&gt; wrote:
+</I>&gt;<i> &gt; To get rid of the problems with the different order of elements of
+</I>&gt;<i> &gt; struct Node on AROS I'm thinking about adding something like
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; struct MyNode
+</I>&gt;<i> &gt; {
+</I>&gt;<i> &gt; ...
+</I>&gt;<i> &gt; };
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; to Ignition with the element order like in the original struct Node.
+</I>&gt;<i> 
+</I>&gt;<i> Not sure if that would catch all problems, at least I don't remember if 
+</I>&gt;<i> there aren't some system lists (or functions) that actually need the 
+</I>&gt;<i> system order.
+</I>&gt;<i> I thought AROS would aim for a drop-in-replacement on 68k, or is there 
+</I>&gt;<i> structure the same there?
+</I>
+The order of struct Node will be changed together with some other fixes
+when the V1 ABI of AROS will be released. It can't be done earlier,
+because all AROS applications have to be be recompiled after this step.
+So all these fixes must be released in one step.
+
+&gt;<i> &gt; Otherweise I'd have to do the time consuming check for cases like
+</I>&gt;<i> &gt; ((struct Node*)foobar)-&gt;ln_Name = ...
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; (After trying to save and load again a file in Ignition on AROS all
+</I>&gt;<i> &gt; cells are yellow and the content of the cells is missing. While the
+</I>&gt;<i> &gt; wrong color might be an endianness problem I'm quite sure that the
+</I>&gt;<i> &gt; misssing cell content has to do with struct Node)
+</I>&gt;<i> 
+</I>&gt;<i> I think it would be better so see where ignition actually abuses the 
+</I>&gt;<i> MinNode, that is, where it uses it as it were a standard MinNode. Doing 
+</I>&gt;<i> so should be relatively straight forward, we could also divide the work 
+</I>&gt;<i> if you want :-)
+</I>
+I'll look at this tomorrow.
+
+Bye,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000064.html">[Ignition-develop] struct Node
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

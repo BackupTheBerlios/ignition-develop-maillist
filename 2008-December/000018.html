@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] r4 - trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20r4%20-%20trunk&In-Reply-To=%3C200812112238.mBBMcX81006486%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000021.html">
+   <LINK REL="Next"  HREF="000022.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] r4 - trunk</H1>
+    <B>axeld at mail.berlios.de</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20r4%20-%20trunk&In-Reply-To=%3C200812112238.mBBMcX81006486%40sheep.berlios.de%3E"
+       TITLE="[Ignition-develop] r4 - trunk">axeld at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 11 23:38:33 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000021.html">[Ignition-develop] AROS port: Can't enter text in cells
+</A></li>
+        <LI>Next message: <A HREF="000022.html">[Ignition-develop] Commit Mailing List
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: axeld
+Date: 2008-12-11 23:38:32 +0100 (Thu, 11 Dec 2008)
+New Revision: 4
+ViewCVS: <A HREF="http://svn.berlios.de/viewcvs/haiku?rev=4&amp;view=rev">http://svn.berlios.de/viewcvs/haiku?rev=4&amp;view=rev</A>
+
+Modified:
+   trunk/ignition.c
+Log:
+* Some minor style cleanup.
+* Added TODO comment about a language specific problem (we need to use the
+  short common function names instead here).
+
+
+Modified: trunk/ignition.c
+===================================================================
+--- trunk/ignition.c	2008-12-11 22:22:45 UTC (rev 3)
++++ trunk/ignition.c	2008-12-11 22:38:32 UTC (rev 4)
+@@ -113,20 +113,19 @@
+ RemoveToolObj(struct ToolObj *to)
+ {
+     Remove((APTR)to);
+-    FreePooled(pool,to,sizeof(struct ToolObj));
++    FreePooled(pool, to, sizeof(struct ToolObj));
+ }
+ 
+ 
+ void
+-AddToolObj(int32 type,STRPTR name,STRPTR help)
++AddToolObj(int32 type, STRPTR name, STRPTR help)
+ {
+     struct ToolObj *to;
+ 
+-    if (to = AllocPooled(pool,sizeof(struct ToolObj)))
+-    {
++    if (to = AllocPooled(pool, sizeof(struct ToolObj))) {
+         to-&gt;to_Type = type;
+         /* strcpy(to-&gt;to_Name,name); */
+-        AddTail(&amp;toolobjs,(struct Node *)to);
++        AddTail(&amp;toolobjs, (struct Node *)to);
+     }
+ }
+ 
+@@ -134,7 +133,7 @@
+ struct MinList *
+ GetIconObjsList(struct Prefs *pr)
+ {
+-    if (HasPrefsModule(pr,WDT_PREFICON))
++    if (HasPrefsModule(pr, WDT_PREFICON))
+         return &amp;pr-&gt;pr_IconObjs;
+ 
+     return &amp;prefs.pr_IconObjs;
+@@ -146,10 +145,9 @@
+ {
+     struct IconObj *io;
+ 
+-    while (io = (APTR)RemHead(l))
+-    {
++    while (io = (APTR)RemHead(l)) {
+         FreeString(io-&gt;io_AppCmd);
+-        FreePooled(pool,io,sizeof(struct IconObj));
++        FreePooled(pool, io, sizeof(struct IconObj));
+     }
+ }
+ 
+@@ -159,8 +157,7 @@
+ {
+     struct IconObj *sio;
+ 
+-    if (sio = AllocPooled(pool,sizeof(struct IconObj)))
+-    {
++    if (sio = AllocPooled(pool,sizeof(struct IconObj))) {
+         sio-&gt;io_AppCmd = AllocString(io-&gt;io_AppCmd);
+         sio-&gt;io_Node.in_Name = sio-&gt;io_AppCmd;
+         sio-&gt;io_Node.in_Image = io-&gt;io_Node.in_Image;
+@@ -170,15 +167,14 @@
+ 
+ 
+ void
+-AddIconObj(struct MinList *list,struct AppCmd *ac,long pos)
++AddIconObj(struct MinList *list, struct AppCmd *ac, long pos)
+ {
+     struct IconObj *io;
+ 
+     if ((io = AllocPooled(pool,sizeof(struct IconObj))) == NULL)
+         return;
+ 
+-    if (ac)
+-    {
++    if (ac) {
+         io-&gt;io_AppCmd = AllocString(ac-&gt;ac_Node.in_Name);
+         io-&gt;io_Node.in_Name = io-&gt;io_AppCmd;
+     /*  if (!strcmp(io-&gt;io_AppCmd,&quot;Leerfeld&quot;))
+@@ -190,24 +186,24 @@
+ 
+ 
+ void
+-MakeMarkText(struct Page *page,STRPTR t)
++MakeMarkText(struct Page *page, STRPTR t)
+ {
+     struct Term *k;
+-    char   s[64];
++    char s[64];
+ 
+-    if (prefs.pr_Table-&gt;pt_Flags &amp; PTF_MARKSUM)
+-        strcpy(s,&quot;summe(&quot;);
++	// TODO: this is language specific!
++    if ((prefs.pr_Table-&gt;pt_Flags &amp; PTF_MARKSUM) != 0)
++        strcpy(s, &quot;summe(&quot;);
+     else
+-        strcpy(s,&quot;mittelwert(&quot;);
+-    strcat(s,t);  strcat(s,&quot;)&quot;);
++        strcpy(s, &quot;mittelwert(&quot;);
++    strcat(s, t);  strcat(s, &quot;)&quot;);
+ 
+-    if (k = CreateTree(page,s))
+-    {
+-        strcat(t,&quot; (&quot;);
+-        if (prefs.pr_Table-&gt;pt_Flags &amp; PTF_MARKAVERAGE)
+-            strcat(t,&quot;&#248; &quot;);
+-        strcat(t,ita(TreeValue(k),-3,ITA_NONE));
+-        strcat(t,&quot;)&quot;);
++    if (k = CreateTree(page, s)) {
++        strcat(t, &quot; (&quot;);
++        if ((prefs.pr_Table-&gt;pt_Flags &amp; PTF_MARKAVERAGE) != 0)
++            strcat(t, &quot;&#248; &quot;);
++        strcat(t, ita(TreeValue(k), -3, ITA_NONE));
++        strcat(t, &quot;)&quot;);
+         DeleteTree(k);
+     }
+ }
+@@ -218,8 +214,8 @@
+ {
+     struct winData *wd;
+     struct tableField *tf;
+-    long   w = wd_PosWidth-4;
+-    char   t[64];
++    long w = wd_PosWidth - 4;
++    char t[64];
+ 
+     if (!page-&gt;pg_Mappe-&gt;mp_Prefs.pr_Disp-&gt;pd_FormBar || !page-&gt;pg_Window)
+         return;
+@@ -227,18 +223,17 @@
+     wd = (struct winData *)page-&gt;pg_Window-&gt;UserData;
+     itext.FrontPen = 1;
+     itext.ITextFont = scr-&gt;Font;
+-    EraseRect(page-&gt;pg_Window-&gt;RPort,10,wd-&gt;wd_FormY+5,9+w,wd-&gt;wd_FormY+fontheight+6);
++    EraseRect(page-&gt;pg_Window-&gt;RPort, 10, wd-&gt;wd_FormY + 5, 9 + w, wd-&gt;wd_FormY + fontheight + 6);
+ 
+-    if (page-&gt;pg_MarkCol == -1)
+-    {
++    if (page-&gt;pg_MarkCol == -1) {
+         struct Name *nm,*snm = NULL;
+ 
+         if (page-&gt;pg_Gad.DispPos == PGS_NONE)
+             return;
+-        foreach(&amp;page-&gt;pg_Mappe-&gt;mp_Prefs.pr_Names,nm)
+-        {
+-            if (nm-&gt;nm_Node.ln_Type == NMT_CELL &amp;&amp; nm-&gt;nm_Page == page &amp;&amp; PosInTablePos(&amp;nm-&gt;nm_TablePos,page-&gt;pg_Gad.cp.cp_Col,page-&gt;pg_Gad.cp.cp_Row))
+-            {
++        foreach (&amp;page-&gt;pg_Mappe-&gt;mp_Prefs.pr_Names, nm) {
++            if (nm-&gt;nm_Node.ln_Type == NMT_CELL
++				&amp;&amp; nm-&gt;nm_Page == page
++				&amp;&amp; PosInTablePos(&amp;nm-&gt;nm_TablePos, page-&gt;pg_Gad.cp.cp_Col, page-&gt;pg_Gad.cp.cp_Row)) {
+                 snm = nm;
+                 if (!nm-&gt;nm_TablePos.tp_Width &amp;&amp; nm-&gt;nm_TablePos.tp_Height)
+                     break;
+@@ -247,63 +242,56 @@
+         if (snm)
+             itext.IText = snm-&gt;nm_Node.ln_Name;
+         else
+-            itext.IText = Coord2String(page-&gt;pg_Gad.cp.cp_Col,page-&gt;pg_Gad.cp.cp_Row);
+-    }
+-    else
+-    {
+-        strcpy(t,Coord2String(page-&gt;pg_MarkCol,page-&gt;pg_MarkRow));
+-        strcat(t,&quot;:&quot;);
+-        strcat(t,Coord2String(page-&gt;pg_MarkWidth != -1 ? page-&gt;pg_MarkCol+page-&gt;pg_MarkWidth : page-&gt;pg_Rows,page-&gt;pg_MarkHeight != -1 ? page-&gt;pg_MarkRow+page-&gt;pg_MarkHeight : page-&gt;pg_Rows));
++            itext.IText = Coord2String(page-&gt;pg_Gad.cp.cp_Col, page-&gt;pg_Gad.cp.cp_Row);
++    } else {
++        strcpy(t, Coord2String(page-&gt;pg_MarkCol, page-&gt;pg_MarkRow));
++        strcat(t, &quot;:&quot;);
++        strcat(t, Coord2String(page-&gt;pg_MarkWidth != -1 ? page-&gt;pg_MarkCol + page-&gt;pg_MarkWidth : page-&gt;pg_Rows, page-&gt;pg_MarkHeight != -1 ? page-&gt;pg_MarkRow + page-&gt;pg_MarkHeight : page-&gt;pg_Rows));
+         if (prefs.pr_Table-&gt;pt_Flags &amp; (PTF_MARKSUM | PTF_MARKAVERAGE))
+-            MakeMarkText(page,t);
++            MakeMarkText(page, t);
+         itext.IText = t;
+     }
+-    makeClip(page-&gt;pg_Window,10,wd-&gt;wd_FormY+5,w-1,fontheight+1);
+-    PrintIText(page-&gt;pg_Window-&gt;RPort,&amp;itext,10+((w-IntuiTextLength(&amp;itext))&gt;&gt;1),wd-&gt;wd_FormY+6);
++    makeClip(page-&gt;pg_Window, 10, wd-&gt;wd_FormY + 5, w - 1, fontheight + 1);
++    PrintIText(page-&gt;pg_Window-&gt;RPort, &amp;itext, 10 + ((w - IntuiTextLength(&amp;itext)) &gt;&gt; 1), wd-&gt;wd_FormY + 6);
+     freeClip(page-&gt;pg_Window);
+ 
+     {
+         STRPTR s = NULL;
+-        BOOL   disabled = FALSE;
++        BOOL disabled = FALSE;
+ 
+-        if (tf = GetTableField(page,page-&gt;pg_Gad.cp.cp_Col,page-&gt;pg_Gad.cp.cp_Row))
+-        {
++        if (tf = GetTableField(page, page-&gt;pg_Gad.cp.cp_Col, page-&gt;pg_Gad.cp.cp_Row)) {
+             if ((tf-&gt;tf_Flags &amp; TFF_SECURITY) &gt; TFF_STATIC)
+                 disabled = TRUE;
+             else
+                 s = tf-&gt;tf_Original;
+         }
+-        GT_SetGadgetAttrs(GadgetAddress(page-&gt;pg_Window,GID_FORM),page-&gt;pg_Window,NULL,GTST_String,s,GA_Disabled,disabled,TAG_END);
++        GT_SetGadgetAttrs(GadgetAddress(page-&gt;pg_Window, GID_FORM), page-&gt;pg_Window, NULL, GTST_String, s, GA_Disabled, disabled, TAG_END);
+     }
+ }
+ 
+ 
+ void
+-DrawIconBar(struct Prefs *pr,struct Window *win, struct winData *wd)
++DrawIconBar(struct Prefs *pr, struct Window *win, struct winData *wd)
+ {
+-    if (pr-&gt;pr_Disp-&gt;pd_IconBar == PDIB_TOP)
+-    {
+-        SetAPen(win-&gt;RPort,2);
+-        DrawDithRect(win-&gt;RPort,win-&gt;BorderLeft,wd-&gt;wd_IconY,win-&gt;Width-1-win-&gt;BorderRight,wd-&gt;wd_IconY-2+wd-&gt;wd_IconH);
+-        if (pr-&gt;pr_Disp-&gt;pd_ToolBar)
+-        {
+-            Move(win-&gt;RPort,win-&gt;BorderLeft,wd-&gt;wd_IconY+wd-&gt;wd_IconH);
+-            Draw(win-&gt;RPort,win-&gt;Width-1-win-&gt;BorderRight,wd-&gt;wd_IconY+wd-&gt;wd_IconH);
++    if (pr-&gt;pr_Disp-&gt;pd_IconBar == PDIB_TOP) {
++        SetAPen(win-&gt;RPort, 2);
++        DrawDithRect(win-&gt;RPort, win-&gt;BorderLeft, wd-&gt;wd_IconY, win-&gt;Width - 1 - win-&gt;BorderRight, wd-&gt;wd_IconY - 2 + wd-&gt;wd_IconH);
++        if (pr-&gt;pr_Disp-&gt;pd_ToolBar) {
++            Move(win-&gt;RPort, win-&gt;BorderLeft, wd-&gt;wd_IconY + wd-&gt;wd_IconH);
++            Draw(win-&gt;RPort, win-&gt;Width - 1 - win-&gt;BorderRight, wd-&gt;wd_IconY + wd-&gt;wd_IconH);
+         }
+-        SetAPen(win-&gt;RPort,1);
+-        Move(win-&gt;RPort,win-&gt;BorderLeft,wd-&gt;wd_IconY+wd-&gt;wd_IconH-1);
+-        Draw(win-&gt;RPort,win-&gt;Width-1-win-&gt;BorderRight,wd-&gt;wd_IconY+wd-&gt;wd_IconH-1);
++        SetAPen(win-&gt;RPort, 1);
++        Move(win-&gt;RPort, win-&gt;BorderLeft, wd-&gt;wd_IconY + wd-&gt;wd_IconH - 1);
++        Draw(win-&gt;RPort, win-&gt;Width - 1 - win-&gt;BorderRight, wd-&gt;wd_IconY + wd-&gt;wd_IconH - 1);
++    } else {
++        SetAPen(win-&gt;RPort, 2);
++        DrawDithRect(win-&gt;RPort, win-&gt;BorderLeft, wd-&gt;wd_IconY + 1, win-&gt;BorderLeft + wd-&gt;wd_IconW - 2, wd-&gt;wd_IconY + wd-&gt;wd_IconH);
++        Move(win-&gt;RPort, win-&gt;BorderLeft, wd-&gt;wd_IconY);
++        Draw(win-&gt;RPort, win-&gt;BorderLeft + wd-&gt;wd_IconW - 2, wd-&gt;wd_IconY);
++        SetAPen(win-&gt;RPort, 1);
++        Move(win-&gt;RPort, win-&gt;BorderLeft + wd-&gt;wd_IconW - 1, wd-&gt;wd_IconY);
++        Draw(win-&gt;RPort, win-&gt;BorderLeft + wd-&gt;wd_IconW - 1, wd-&gt;wd_IconY + wd-&gt;wd_IconH);
+     }
+-    else
+-    {
+-        SetAPen(win-&gt;RPort,2);
+-        DrawDithRect(win-&gt;RPort,win-&gt;BorderLeft,wd-&gt;wd_IconY+1,win-&gt;BorderLeft+wd-&gt;wd_IconW-2,wd-&gt;wd_IconY+wd-&gt;wd_IconH);
+-        Move(win-&gt;RPort,win-&gt;BorderLeft,wd-&gt;wd_IconY);
+-        Draw(win-&gt;RPort,win-&gt;BorderLeft+wd-&gt;wd_IconW-2,wd-&gt;wd_IconY);
+-        SetAPen(win-&gt;RPort,1);
+-        Move(win-&gt;RPort,win-&gt;BorderLeft+wd-&gt;wd_IconW-1,wd-&gt;wd_IconY);
+-        Draw(win-&gt;RPort,win-&gt;BorderLeft+wd-&gt;wd_IconW-1,wd-&gt;wd_IconY+wd-&gt;wd_IconH);
+-    }
+ }
+ 
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000021.html">[Ignition-develop] AROS port: Can't enter text in cells
+</A></li>
+	<LI>Next message: <A HREF="000022.html">[Ignition-develop] Commit Mailing List
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

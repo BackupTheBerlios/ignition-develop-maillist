@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Segfault when entering a function without a parameter
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2009-January/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%0A%20%3D%3Futf-8%3Fq%3FSegfault_when_entering_a_function_wi%3F%3D%0A%20%3D%3Futf-8%3Fq%3Fthout_a_parameter%3F%3D&In-Reply-To=%3C39678491488-BeMail%40zon%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000057.html">
+   <LINK REL="Next"  HREF="000062.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Segfault when entering a function without a parameter</H1>
+    <B>Axel D&#246;rfler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%0A%20%3D%3Futf-8%3Fq%3FSegfault_when_entering_a_function_wi%3F%3D%0A%20%3D%3Futf-8%3Fq%3Fthout_a_parameter%3F%3D&In-Reply-To=%3C39678491488-BeMail%40zon%3E"
+       TITLE="[Ignition-develop] Segfault when entering a function without a parameter">axeld at pinc-software.de
+       </A><BR>
+    <I>Wed Jan 21 18:18:06 CET 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000057.html">[Ignition-develop] Segfault when entering a function without	a	parameter
+</A></li>
+        <LI>Next message: <A HREF="000062.html">[Ignition-develop] Segfault when entering a function without	a	parameter
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#59">[ date ]</a>
+              <a href="thread.html#59">[ thread ]</a>
+              <a href="subject.html#59">[ subject ]</a>
+              <a href="author.html#59">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Matthias Rustler &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/ignition-develop">mrustler at gmx.de</A>&gt; wrote:
+&gt;<i> Am Dienstag, den 20.01.2009, 16:59 +0100 schrieb Axel D&#246;rfler:
+</I>&gt;<i> &gt; This does not happen on the (old) 68k build, so it either is an 
+</I>&gt;<i> &gt; AROS/
+</I>&gt;<i> &gt; GCC specific bug, or maybe something you changed during the port.
+</I>&gt;<i> &gt; I didn't manage to find enough time to get even the SAS/C build up 
+</I>&gt;<i> &gt; again today :-/
+</I>&gt;<i> Please have a look at positing #48:
+</I>&gt;<i> <A HREF="http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26269#forumpost26269">http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26269#forumpost26269</A>
+</I>&gt;<i> &gt; 
+</I>&gt;<i> So it's:
+</I>&gt;<i> - different order of operator
+</I>&gt;<i> - endiannes depending tricks
+</I>&gt;<i> - relying on gadtools internals
+</I>
+ignition itself should not depend on gadtools internals. gtdrag is 
+another matter, of course.
+I guess there could be many more operator order issues in the code that 
+we'll have to find.
+
+Is there an API extension to do drag&amp;drop properly in AROS that we 
+could use to write a wrapper for the gtdrag functions?
+Only the treeview would probably need more work, but I'm not really 
+into that code that much anymore to tell more.
+
+Bye,
+   Axel.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000057.html">[Ignition-develop] Segfault when entering a function without	a	parameter
+</A></li>
+	<LI>Next message: <A HREF="000062.html">[Ignition-develop] Segfault when entering a function without	a	parameter
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#59">[ date ]</a>
+              <a href="thread.html#59">[ thread ]</a>
+              <a href="subject.html#59">[ subject ]</a>
+              <a href="author.html#59">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

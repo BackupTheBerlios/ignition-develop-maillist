@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Segfault in GetASCII
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segfault%20in%20GetASCII&In-Reply-To=%3C52388418852-BeMail%40zon%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000014.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Segfault in GetASCII</H1>
+    <B>Axel D&#246;rfler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segfault%20in%20GetASCII&In-Reply-To=%3C52388418852-BeMail%40zon%3E"
+       TITLE="[Ignition-develop] Segfault in GetASCII">axeld at pinc-software.de
+       </A><BR>
+    <I>Thu Dec  4 23:38:34 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">[Ignition-develop] Segfault in GetASCII
+</A></li>
+        <LI>Next message: <A HREF="000014.html">[Ignition-develop] AROS port: Can't enter text in cells
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Matthias Rustler &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/ignition-develop">mrustler at gmx.de</A>&gt; wrote:
+&gt;<i> &gt; Crash happens in line:
+</I>&gt;<i> &gt; ievent-&gt;ie_position.ie_addr = *((APTR *)imsg.IAddress);
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; because imsg.IAddress is NULL. Is it enough to protect against NULL 
+</I>&gt;<i> &gt; or
+</I>&gt;<i> &gt; is this a sign for a more serious problem?
+</I>
+I've looked at it, but I must admit I don't really understand this 
+scary code :-)
+I have no idea where that IAddress is supposed to come from, and if 
+there should be anyone using imsg before that - so by all means I think 
+we should generally replace this with NULL if it keeps working :-)
+
+&gt;<i> I just did it (check for NULL). GUI shows up but crashes early.
+</I>&gt;<i> <A HREF="http://www.mazze-online.de/aros/pictures/ignition2.jpg">http://www.mazze-online.de/aros/pictures/ignition2.jpg</A>
+</I>&gt;<i> 
+</I>&gt;<i> Next task is to make the preferences loading routines endiannes safe.
+</I>
+Oh yes, that's something I did not spend any time with - natural, when 
+using an Amiga :-)
+Please consider adding global defines/functions to handle this instead 
+of adding any AROS specific code. Everything on disk should be big 
+endian, anyway.
+
+Bye,
+   Axel.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">[Ignition-develop] Segfault in GetASCII
+</A></li>
+	<LI>Next message: <A HREF="000014.html">[Ignition-develop] AROS port: Can't enter text in cells
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

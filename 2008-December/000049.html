@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Segfault when entering a function without a	parameter
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segfault%20when%20entering%20a%20function%20without%20a%0A%09parameter&In-Reply-To=%3C1230308541.4468.23.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000048.html">
+   <LINK REL="Next"  HREF="000050.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Segfault when entering a function without a	parameter</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Segfault%20when%20entering%20a%20function%20without%20a%0A%09parameter&In-Reply-To=%3C1230308541.4468.23.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Segfault when entering a function without a	parameter">mrustler at gmx.de
+       </A><BR>
+    <I>Fri Dec 26 17:22:21 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000048.html">[Ignition-develop] Segfault in diagram preview
+</A></li>
+        <LI>Next message: <A HREF="000050.html">[Ignition-develop] Clicking on Checkbox object causes recursion
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#49">[ date ]</a>
+              <a href="thread.html#49">[ thread ]</a>
+              <a href="subject.html#49">[ subject ]</a>
+              <a href="author.html#49">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+when I enter a function without giving a parameter (e.g. &quot;=abs()&quot;), I
+get a segfault:
+
+#0  0xb65e2737 in AddReferences (r=0xb674b4f8, t=0xb674b358) at
+reference.c:509
+#1  0xb65e2880 in UpdateReferences (r=0xb674b4f8, t=0xb674b358) at
+reference.c:594
+#2  0xb65e2b2a in MakeReference (page=0xb674a078, type=1 '\001',
+this=0xb674a888, t=0xb674b358) at reference.c:692
+#3  0xb654b66c in UpdateCellText (page=0xb674a078, tf=0xb674a888) at
+cell.c:613
+#4  0xb6564a8a in WriteTabGadget (page=0xb674a078, un=0xb674b2e8) at
+edit.c:234
+#5  0xb6565331 in FreeTabGadget (page=0xb674a078) at edit.c:437
+#6  0xb6566a5d in CreateTabGadget (page=0xb674a078, col=1, row=1,
+makevisible=1) at edit.c:845
+#7  0xb65dea2d in HandleBars () at project.c:1475
+#8  0xb65dfa3d in handleProjIDCMP (tags=0x0) at project.c:1731
+#9  0xb65a4c0b in HandleApp () at ignition.c:2245
+#10 0xb65a5b6e in main (argc=1, argv=0xb5e7e3d0) at ignition.c:2560
+
+
+Crash happens because f is 0xffffffff in:
+  switch (f-&gt;f_ID)
+
+
+Regards,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000048.html">[Ignition-develop] Segfault in diagram preview
+</A></li>
+	<LI>Next message: <A HREF="000050.html">[Ignition-develop] Clicking on Checkbox object causes recursion
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#49">[ date ]</a>
+              <a href="thread.html#49">[ thread ]</a>
+              <a href="subject.html#49">[ subject ]</a>
+              <a href="author.html#49">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] struct Node
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2009-February/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20struct%20Node&In-Reply-To=%3C1233694669.8221.12.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000067.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] struct Node</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20struct%20Node&In-Reply-To=%3C1233694669.8221.12.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] struct Node">mrustler at gmx.de
+       </A><BR>
+    <I>Tue Feb  3 21:57:49 CET 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000067.html">[Ignition-develop] Segfault when entering a function without a parameter
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#66">[ date ]</a>
+              <a href="thread.html#66">[ thread ]</a>
+              <a href="subject.html#66">[ subject ]</a>
+              <a href="author.html#66">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Am Montag, den 26.01.2009, 23:33 +0100 schrieb Matthias Rustler:
+&gt;<i> Hi,
+</I>&gt;<i> 
+</I>&gt;<i> Am Sonntag, den 25.01.2009, 19:07 +0100 schrieb Axel D&#246;rfler:
+</I>&gt;<i> &gt; I think it would be better so see where ignition actually abuses the 
+</I>&gt;<i> &gt; MinNode, that is, where it uses it as it were a standard MinNode. Doing 
+</I>&gt;<i> &gt; so should be relatively straight forward, we could also divide the work 
+</I>&gt;<i> &gt; if you want :-)
+</I>&gt;<i> 
+</I>&gt;<i> I'll look at this tomorrow.
+</I>
+Sorry for the late reply. I was busy with other things.
+
+The following change caused a new problem:
+
+Modified: trunk/io.h
+===================================================================
+--- trunk/io.h  2009-01-23 18:02:59 UTC (rev 39)
++++ trunk/io.h  2009-01-23 18:27:55 UTC (rev 40)
+@@ -65,7 +65,7 @@
+ /*************************** NumberLink ***************************/
+ 
+ struct NumberLink {
+-       struct MinNode nl_Node;
++       struct Node nl_Node;
+        UWORD  nl_Number;
+        APTR   nl_Link;
+ };
+
+Now when I enter the same formula in several cells and then select
+&quot;Recently used&quot; in the formula editor then the same formula appears
+several times.
+
+Changing of struct Link didn't help:
+
+ struct Link {
+-	struct MinNode l_Node;
++	struct Node l_Node;
+ 	APTR   l_Link;
+ 	ULONG  ASM (*l_HookFunction)(REG(a0, APTR), REG(a2, APTR), REG(a1,
+struct LVDrawMsg *));
+ };
+
+So this seems to be a case where a MinNode is converted to a Node in
+order to access its elements. Can you have a look, please?
+There are probably other nodes which are &quot;sub classes&quot; of struct Link.
+
+Cheers,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000067.html">[Ignition-develop] Segfault when entering a function without a parameter
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#66">[ date ]</a>
+              <a href="thread.html#66">[ thread ]</a>
+              <a href="subject.html#66">[ subject ]</a>
+              <a href="author.html#66">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

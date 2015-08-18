@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Porting Ignition
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-November/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228040697.8308.33.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000003.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Porting Ignition</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228040697.8308.33.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Porting Ignition">mrustler at gmx.de
+       </A><BR>
+    <I>Sun Nov 30 11:24:57 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000003.html">[Ignition-develop] Porting Ignition
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Am Freitag, den 28.11.2008, 12:01 +0100 schrieb Alexandre Balaban:
+
+&gt;<i> &gt; Am Mittwoch, den 26.11.2008, 09:37 +0100 schrieb Alexandre Balaban:
+</I>&gt;<i> &gt;&gt; Hello Matthias,
+</I>&gt;<i> &gt;&gt;
+</I>&gt;<i> &gt;&gt; &gt; one of the development goals of Ignition is to port it to different
+</I>&gt;<i> &gt;&gt; &gt; AmigaOS flavours. There is a macro set which has support for:
+</I>&gt;<i> &gt;&gt; &gt; -Classic AmigaOS, AOS4, Morphos
+</I>&gt;<i> &gt;&gt; &gt; -GNUC, SAS/C, vbcc, STORM, Maxon
+</I>&gt;<i> &gt;&gt; &gt; -Libraries, Hooks, Interrupts, Variadic functions
+</I>&gt;<i> &gt;&gt; &gt;
+</I>&gt;<i> &gt;&gt; &gt; <A HREF="http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/">http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/</A>
+</I>&gt;<i> &gt;&gt; &gt;
+</I>&gt;<i> &gt;&gt; &gt; Unfortunately, it doesn't fully support AROS. AROS has its own
+</I>&gt;<i> &gt;&gt; &gt; compatibility macro set which has a different principle. The macros for
+</I>&gt;<i> &gt;&gt; &gt; library and hook functions contain the number of the arguments in their
+</I>&gt;<i> &gt;&gt; &gt; name. And the functions must be wrapped in
+</I>&gt;<i> &gt;&gt; &gt; AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+</I>&gt;<i> &gt;&gt; &gt;
+</I>&gt;<i> &gt;&gt; &gt; Therefor it's easier to define a new macro set which expands to AROS
+</I>&gt;<i> and
+</I>&gt;<i> &gt;&gt; &gt; SDI.
+</I>&gt;<i> &gt;&gt;
+</I>&gt;<i> &gt;&gt; I must say that I hate those function defining macros because they hide
+</I>&gt;<i> &gt;&gt; functions' prototype and implementation from every IDE scanner out there
+</I>&gt;<i> &gt;&gt; thus making their &quot;function browser&quot; useless. it also prevent
+</I>&gt;<i> readability.
+</I>&gt;<i> &gt;&gt; May I ask you why AROS can't use standard C function prototypes as other
+</I>&gt;<i> &gt;&gt; Amiga OS ?
+</I>
+I'm now trying to use the macros from SDI_compiler.h. This means the
+function arguments changed from 
+&quot;reg(a0) struct foo *bar&quot; to
+&quot;REG(a0, struct foo *bar)&quot;.
+
+I've removed all AROS specific macros for the Hook functions.
+
+The remaining problem is the library functions. The SDI REG macro
+expands for AROS to the argument name, hence the register name is lost.
+If someone creates an AROS-68k version it would have stack call instead
+of register call.
+ 
+
+&gt;<i> &gt; I could do that, but then the arguments are passed on the stack. The
+</I>&gt;<i> &gt; result ist that the library isn't any longer compatible with
+</I>&gt;<i> &gt; AmigaOs-68k.
+</I>&gt;<i> 
+</I>&gt;<i> Can you elaborate on this ? How would it look like in C ?
+</I>&gt;<i> 
+</I>&gt;<i> &gt; Another case are hook functions. It is possible to define them without
+</I>&gt;<i> &gt; marcros. But the you have to set h_Entry to the function HookEntry from
+</I>&gt;<i> &gt; amiga.lib, which causes a speed penalty:
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; myhook.h_Entry = HookEntry;
+</I>&gt;<i> &gt; myhook.h_SubEntry = (HOOKFUNC)myfunc;
+</I>&gt;<i> 
+</I>&gt;<i> Speed penalty in AROS ? Are you saying that AROS has a different mecanism
+</I>&gt;<i> for Hooks ? How the hook functions look like in AROS ?
+</I>
+I think I was a bit too dramatically. The hook function is called
+indirectly from the HookEntry function. I doubt that this causes a
+recognicable speed loss.
+
+&gt;<i> &gt;&gt; Wouldn't it be better to try to update SDI to fully support AROS instead
+</I>&gt;<i> &gt;&gt; of reinventing those macros in each project ?
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; This would be the perfect solution, but I don't know how to do that. The
+</I>&gt;<i> &gt; AROS macros have the number of arguments in their name (e.g. AROS_LH2
+</I>&gt;<i> &gt; for a library function with 2 parameters.)
+</I>&gt;<i> &gt; So a simple wrapper isn't possible.
+</I>&gt;<i> 
+</I>&gt;<i> Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+</I>&gt;<i> a library function in AROS that would take two argument and return void ?
+</I>
+On X86-32 most AROS compatibility macros expand to &quot;air&quot; because on this
+platform the arguments are pushed on the stack.
+
+#define AROS_LH2(t,n,a1,a2,bt,bn,o,s) \
+    __AROS_LH_PREFIX t AROS_SLIB_ENTRY(n,s)(\
+    __AROS_LHA(a1),\
+    __AROS_LHA(a2),\
+    __AROS_LH_BASE(bt,bn)) {
+
+#define __AROS_LH_BASE(basetype,basename)   basetype basename
+#define __AROS_LHA(type,name,reg)     type name
+#define __AROS_LH_PREFIX
+#define AROS_SLIB_ENTRY(n,s)   __AROS_SLIB_ENTRY(n,s)
+#define __AROS_SLIB_ENTRY(n,s)   s ## _ ## n
+
+
+&gt;<i> Also did you already started porting Ignition to AROS ?
+</I>
+Yes. The pScroller.gadget, pTextedit.gadget and gtdrag.library are
+building. Ignition itself needs some work (fixing some GCC related
+issues and removing some #ifdef __AROS__ ;-)
+
+
+Regards,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000003.html">[Ignition-develop] Porting Ignition
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

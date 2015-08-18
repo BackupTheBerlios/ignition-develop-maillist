@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Porting Ignition
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228160342.8172.26.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000007.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Porting Ignition</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228160342.8172.26.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Porting Ignition">mrustler at gmx.de
+       </A><BR>
+    <I>Mon Dec  1 20:39:02 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Ignition-develop] AROS port
+</A></li>
+        <LI>Next message: <A HREF="000007.html">[Ignition-develop] Porting Ignition
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+(Resent to the ML because 1st attempt became a private mail.) 
+
+Am Freitag, den 28.11.2008, 20:46 +0100 schrieb Axel D&#246;rfler:
+&gt;<i> Alexandre Balaban wrote:
+</I>
+&gt;<i> &gt;&gt;&gt; I must say that I hate those function defining macros because they hide
+</I>&gt;<i> &gt;&gt;&gt; functions' prototype and implementation from every IDE scanner out there
+</I>&gt;<i> &gt;&gt;&gt; thus making their &quot;function browser&quot; useless. it also prevent readability.
+</I>&gt;<i> &gt;&gt;&gt; May I ask you why AROS can't use standard C function prototypes as other
+</I>&gt;<i> &gt;&gt;&gt; Amiga OS ?
+</I>&gt;<i> 
+</I>&gt;<i> I can just say that I'm with you on this - if possible, I would like to 
+</I>&gt;<i> avoid those macros. But if it isn't we'll just have to accept it.
+</I>&gt;<i> If the SDI macros are portable to AROS even with a bit of a hack, I 
+</I>&gt;<i> would appreciate that.
+</I>
+As said in the mail to Alexandre: the hooks and dispatchers are now
+without any AROS macros.
+
+But when I remove the macros from the library functions, I'll get stack
+call. If there is ever a 68k version of AROS then users will sooner or
+later have a mix of orgignal Amiga and AROS applications. I assume to
+get crashes if someone replaces a library with register call by one with
+stack call. That's wy I want to keep the macros for the library
+functions.
+
+&gt;<i> &gt;&gt;&gt; Wouldn't it be better to try to update SDI to fully support AROS instead
+</I>&gt;<i> &gt;&gt;&gt; of reinventing those macros in each project ?
+</I>&gt;<i> &gt;&gt; This would be the perfect solution, but I don't know how to do that. The
+</I>&gt;<i> &gt;&gt; AROS macros have the number of arguments in their name (e.g. AROS_LH2
+</I>&gt;<i> &gt;&gt; for a library function with 2 parameters.)
+</I>&gt;<i> &gt;&gt; So a simple wrapper isn't possible.
+</I>&gt;<i> &gt; Can you describe me how AROS_LH2 would expand ? i.e. how would you write
+</I>&gt;<i> &gt; a library function in AROS that would take two argument and return void ?
+</I>&gt;<i> 
+</I>&gt;<i> That's indeed the question. I've already downloaded the current AROS 
+</I>&gt;<i> snapshot, but I didn't find the time to have a look at the meaty bits yet.
+</I>&gt;<i> I also must say that even though I'm definitely willing to help with 
+</I>&gt;<i> this, my time is currently very limited.
+</I>&gt;<i> Is there an AROS (VMware/VirtualBox) image that already contains all 
+</I>&gt;<i> developer tools (and maybe SVN) to be able to start right away? That 
+</I>&gt;<i> would at least simplify testing.
+</I>
+If you have Linux on a X86-32 I'm highly recommending that you build
+AROS yourself from the source. This way you can use the AROS
+build-system, the GNU debugger, and can restart quickly after a crash.
+
+There is a distribution for VMware. <A HREF="http://www.vmwaros.org/.">http://www.vmwaros.org/.</A> It should
+be OK for testing. Problem is the development tools. SVN doesn't exist
+for AROS/native. The build-system exists only for some weeks and is
+probably difficult to set up.
+
+&gt;<i> &gt; Also did you already started porting Ignition to AROS ?
+</I>&gt;<i> 
+</I>&gt;<i> Yes, he has a patch pending that caused this discussion (currently for 
+</I>&gt;<i> the libs part only, but that's where it should begin, anyway) :-)
+</I>
+I'll soon send an update with far less &quot;#ifdef __AROS__&quot;.
+
+Regards,
+Matthias
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Ignition-develop] AROS port
+</A></li>
+	<LI>Next message: <A HREF="000007.html">[Ignition-develop] Porting Ignition
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

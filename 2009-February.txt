@@ -1,0 +1,129 @@
+From mrustler at gmx.de  Tue Feb  3 21:57:49 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Tue, 03 Feb 2009 21:57:49 +0100
+Subject: [Ignition-develop] struct Node
+In-Reply-To: <1233009231.16854.8.camel@bellodello>
+References: <26529298837-BeMail@zon>  <1233009231.16854.8.camel@bellodello>
+Message-ID: <1233694669.8221.12.camel@bellodello>
+
+Am Montag, den 26.01.2009, 23:33 +0100 schrieb Matthias Rustler:
+> Hi,
+> 
+> Am Sonntag, den 25.01.2009, 19:07 +0100 schrieb Axel D?rfler:
+> > I think it would be better so see where ignition actually abuses the 
+> > MinNode, that is, where it uses it as it were a standard MinNode. Doing 
+> > so should be relatively straight forward, we could also divide the work 
+> > if you want :-)
+> 
+> I'll look at this tomorrow.
+
+Sorry for the late reply. I was busy with other things.
+
+The following change caused a new problem:
+
+Modified: trunk/io.h
+===================================================================
+--- trunk/io.h  2009-01-23 18:02:59 UTC (rev 39)
++++ trunk/io.h  2009-01-23 18:27:55 UTC (rev 40)
+@@ -65,7 +65,7 @@
+ /*************************** NumberLink ***************************/
+ 
+ struct NumberLink {
+-       struct MinNode nl_Node;
++       struct Node nl_Node;
+        UWORD  nl_Number;
+        APTR   nl_Link;
+ };
+
+Now when I enter the same formula in several cells and then select
+"Recently used" in the formula editor then the same formula appears
+several times.
+
+Changing of struct Link didn't help:
+
+ struct Link {
+-	struct MinNode l_Node;
++	struct Node l_Node;
+ 	APTR   l_Link;
+ 	ULONG  ASM (*l_HookFunction)(REG(a0, APTR), REG(a2, APTR), REG(a1,
+struct LVDrawMsg *));
+ };
+
+So this seems to be a case where a MinNode is converted to a Node in
+order to access its elements. Can you have a look, please?
+There are probably other nodes which are "sub classes" of struct Link.
+
+Cheers,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Wed Feb  4 10:28:15 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 04 Feb 2009 10:28:15 +0100 CET
+Subject: [Ignition-develop]
+ =?utf-8?q?Segfault_when_entering_a_function_wi?=
+ =?utf-8?q?thout_a_parameter?=
+In-Reply-To: <1232697235.8198.3.camel@bellodello>
+Message-ID: <6537217462-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > Is there an API extension to do drag&drop properly in AROS that we 
+> > could use to write a wrapper for the gtdrag functions?
+> > Only the treeview would probably need more work, but I'm not really 
+> > into that code that much anymore to tell more.
+> I don't think so. Even our MUI clone Zune has only limited DND 
+> support.
+> 
+> Nevertheless, I've asked on the aros-exec forum and hope to get an
+> answer:
+> 
+> http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26337#forumpost26337
+> 
+In that case, I think we should disable the actual drag'n'drop support 
+in gtdrag for AROS for the time being - if that solves the problems, at 
+least. IIRC there isn't any crucial functionality you will miss 
+(besides copying configurations).
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Feb  4 19:24:21 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 04 Feb 2009 19:24:21 +0100
+Subject: [Ignition-develop] Segfault when entering a function without
+	a	parameter
+In-Reply-To: <6537217462-BeMail@zon>
+References: <6537217462-BeMail@zon>
+Message-ID: <1233771861.8221.24.camel@bellodello>
+
+Am Mittwoch, den 04.02.2009, 10:28 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > > Is there an API extension to do drag&drop properly in AROS that we 
+> > > could use to write a wrapper for the gtdrag functions?
+> > > Only the treeview would probably need more work, but I'm not really 
+> > > into that code that much anymore to tell more.
+> > I don't think so. Even our MUI clone Zune has only limited DND 
+> > support.
+> > 
+> > Nevertheless, I've asked on the aros-exec forum and hope to get an
+> > answer:
+> > 
+> > http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26337#forumpost26337
+> > 
+> In that case, I think we should disable the actual drag'n'drop support 
+> in gtdrag for AROS for the time being - if that solves the problems, at 
+> least. IIRC there isn't any crucial functionality you will miss 
+> (besides copying configurations).
+
+OK. Can you do that?
+
+Regards,
+Matthias
+
+
+
+

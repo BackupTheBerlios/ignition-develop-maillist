@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ignition-develop] Porting Ignition
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ignition-develop/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228329851.8363.2.camel%40bellodello%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000010.html">
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ignition-develop] Porting Ignition</H1>
+    <B>Matthias Rustler</B> 
+    <A HREF="mailto:ignition-develop%40lists.berlios.de?Subject=Re%3A%20%5BIgnition-develop%5D%20Porting%20Ignition&In-Reply-To=%3C1228329851.8363.2.camel%40bellodello%3E"
+       TITLE="[Ignition-develop] Porting Ignition">mrustler at gmx.de
+       </A><BR>
+    <I>Wed Dec  3 19:44:11 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000010.html">[Ignition-develop] AROS port
+</A></li>
+        <LI>Next message: <A HREF="000011.html">[Ignition-develop] Segfault in GetASCII
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Am Mittwoch, den 26.11.2008, 00:56 +0100 schrieb Matthias Rustler:
+&gt;<i> Hi,
+</I>&gt;<i> 
+</I>&gt;<i> one of the development goals of Ignition is to port it to different
+</I>&gt;<i> AmigaOS flavours. There is a macro set which has support for:
+</I>&gt;<i> -Classic AmigaOS, AOS4, Morphos
+</I>&gt;<i> -GNUC, SAS/C, vbcc, STORM, Maxon
+</I>&gt;<i> -Libraries, Hooks, Interrupts, Variadic functions
+</I>&gt;<i> 
+</I>&gt;<i> <A HREF="http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/">http://sditools.cvs.sourceforge.net/viewvc/sditools/sditools/headers/</A>
+</I>&gt;<i> 
+</I>&gt;<i> Unfortunately, it doesn't fully support AROS. AROS has its own
+</I>&gt;<i> compatibility macro set which has a different principle. The macros for
+</I>&gt;<i> library and hook functions contain the number of the arguments in their
+</I>&gt;<i> name. And the functions must be wrapped in
+</I>&gt;<i> AROS_USER(LIB)FUNC_INIT/AROS_USER(LIB)FUNC_EXIT.
+</I>&gt;<i> 
+</I>&gt;<i> Therefor it's easier to define a new macro set which expands to AROS and
+</I>&gt;<i> SDI.
+</I>
+I've attached the current svn diff for the libs at this mail.
+
+I'm now using an extended SDI_compiler.h. The Ignition related stuff is
+at the end of that file. The LIB_L... macros for platforms other than
+AROS still have to be written.
+
+As a side-effect the libs have been ported to GCC (except of non-AROS
+parts like xxx_lib.c). So it builds with very few remaining compiler
+warnings.
+
+Regards,
+Matthias
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ignition_libs.diff.zip
+Type: application/zip
+Size: 27556 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/ignition-develop/attachments/20081203/39f701df/attachment.zip">https://lists.berlios.de/pipermail/ignition-develop/attachments/20081203/39f701df/attachment.zip</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000010.html">[Ignition-develop] AROS port
+</A></li>
+	<LI>Next message: <A HREF="000011.html">[Ignition-develop] Segfault in GetASCII
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ignition-develop">More information about the Ignition-develop
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,499 @@
+From mrustler at gmx.de  Sun Jan  4 13:23:17 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sun, 04 Jan 2009 13:23:17 +0100
+Subject: [Ignition-develop] Segfault when entering a function without
+	a	parameter
+In-Reply-To: <1230308541.4468.23.camel@bellodello>
+References: <1230308541.4468.23.camel@bellodello>
+Message-ID: <1231071797.8172.9.camel@bellodello>
+
+Am Freitag, den 26.12.2008, 17:22 +0100 schrieb Matthias Rustler:
+> Hi,
+> 
+> when I enter a function without giving a parameter (e.g. "=abs()"), I
+> get a segfault:
+
+Giving a parameter to a function which doesn't expect a parameter (e.g.
+"=random(5)") results in a segfault with the same backtrace.
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Tue Jan 20 16:59:31 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 20 Jan 2009 16:59:31 +0100 CET
+Subject: [Ignition-develop]
+ =?utf-8?q?Segfault_when_entering_a_function_wi?=
+ =?utf-8?q?thout_a_parameter?=
+In-Reply-To: <1231071797.8172.9.camel@bellodello>
+Message-ID: <26025185418-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > when I enter a function without giving a parameter (e.g. "=abs()"), 
+> > I
+> > get a segfault:
+> Giving a parameter to a function which doesn't expect a parameter 
+> (e.g.
+> "=random(5)") results in a segfault with the same backtrace.
+
+This does not happen on the (old) 68k build, so it either is an AROS/
+GCC specific bug, or maybe something you changed during the port.
+I didn't manage to find enough time to get even the SAS/C build up 
+again today :-/
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Tue Jan 20 17:41:22 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 20 Jan 2009 17:41:22 +0100 CET
+Subject: [Ignition-develop] Segfault in diagram preview
+In-Reply-To: <1230307971.4468.16.camel@bellodello>
+Message-ID: <28536949625-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> But in frame #1 "draw" is indentionally called with NULL for the page
+> parameter.
+> 
+> This happens only with the Lines diagram.
+
+This should be fixed as of r32, thanks for the note.
+I just cannot test it right now, I hope it compiles...
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Tue Jan 20 17:43:01 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Tue, 20 Jan 2009 17:43:01 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1230298249.4468.5.camel@bellodello>
+Message-ID: <28635401783-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> > Still strange that it manages to create correct graphics with 
+> > higher 
+> > resolutions, then, or am I missing something?
+> OpenAppScreen calls MakeTempRas which calls gInitArea. This sets the 
+> new
+> limits to the Screen size.
+
+That reminds me that you broke SafeClip completely (by not really doing 
+any clipping).
+Could you set up the original (updated with the API) sources such that 
+it will compile with the 68k version of ignition?
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Jan 21 14:37:30 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 21 Jan 2009 14:37:30 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <28635401783-BeMail@zon>
+References: <28635401783-BeMail@zon>
+Message-ID: <1232545050.3245.5.camel@bellodello>
+
+Am Dienstag, den 20.01.2009, 17:43 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > > Still strange that it manages to create correct graphics with 
+> > > higher 
+> > > resolutions, then, or am I missing something?
+> > OpenAppScreen calls MakeTempRas which calls gInitArea. This sets the 
+> > new
+> > limits to the Screen size.
+> 
+> That reminds me that you broke SafeClip completely (by not really doing 
+> any clipping).
+
+Problem is to rewrite the assembler part. In my C implementation I only
+ensure that coordinates are inside the clipping rectangle.
+
+> Could you set up the original (updated with the API) sources such that 
+> it will compile with the 68k version of ignition?
+
+Done. As written in the commit log: I can't test it. 
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Wed Jan 21 14:49:20 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 21 Jan 2009 14:49:20 +0100
+Subject: [Ignition-develop] Segfault in diagram preview
+In-Reply-To: <28536949625-BeMail@zon>
+References: <28536949625-BeMail@zon>
+Message-ID: <1232545760.3245.6.camel@bellodello>
+
+Am Dienstag, den 20.01.2009, 17:41 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > But in frame #1 "draw" is indentionally called with NULL for the page
+> > parameter.
+> > 
+> > This happens only with the Lines diagram.
+> 
+> This should be fixed as of r32, thanks for the note.
+> I just cannot test it right now, I hope it compiles...
+
+Yes. thanks.
+
+
+
+From mrustler at gmx.de  Wed Jan 21 14:53:00 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 21 Jan 2009 14:53:00 +0100
+Subject: [Ignition-develop] Segfault when entering a function without
+	a	parameter
+In-Reply-To: <26025185418-BeMail@zon>
+References: <26025185418-BeMail@zon>
+Message-ID: <1232545980.3245.11.camel@bellodello>
+
+Am Dienstag, den 20.01.2009, 16:59 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > > when I enter a function without giving a parameter (e.g. "=abs()"), 
+> > > I
+> > > get a segfault:
+> > Giving a parameter to a function which doesn't expect a parameter 
+> > (e.g.
+> > "=random(5)") results in a segfault with the same backtrace.
+> 
+> This does not happen on the (old) 68k build, so it either is an AROS/
+> GCC specific bug, or maybe something you changed during the port.
+> I didn't manage to find enough time to get even the SAS/C build up 
+> again today :-/
+
+Please have a look at positing #48:
+http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26269#forumpost26269
+
+So it's:
+- different order of operator
+- endiannes depending tricks
+- relying on gadtools internals
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Wed Jan 21 18:15:48 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 21 Jan 2009 18:15:48 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1232545050.3245.5.camel@bellodello>
+Message-ID: <39540717518-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Dienstag, den 20.01.2009, 17:43 +0100 schrieb Axel D?rfler:
+> > That reminds me that you broke SafeClip completely (by not really 
+> > doing 
+> > any clipping).
+> Problem is to rewrite the assembler part. In my C implementation I 
+> only
+> ensure that coordinates are inside the clipping rectangle.
+
+It doesn't even have to be that fast or optimized, so that shouldn't be 
+too hard. If you don't like math, I can do that, though ;-)
+
+> > Could you set up the original (updated with the API) sources such 
+> > that 
+> > it will compile with the 68k version of ignition?
+> Done. As written in the commit log: I can't test it. 
+
+Thanks!
+
+Bye,
+   Axel.
+
+
+
+From axeld at pinc-software.de  Wed Jan 21 18:18:06 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 21 Jan 2009 18:18:06 +0100 CET
+Subject: [Ignition-develop]
+ =?utf-8?q?Segfault_when_entering_a_function_wi?=
+ =?utf-8?q?thout_a_parameter?=
+In-Reply-To: <1232545980.3245.11.camel@bellodello>
+Message-ID: <39678491488-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Dienstag, den 20.01.2009, 16:59 +0100 schrieb Axel D?rfler:
+> > This does not happen on the (old) 68k build, so it either is an 
+> > AROS/
+> > GCC specific bug, or maybe something you changed during the port.
+> > I didn't manage to find enough time to get even the SAS/C build up 
+> > again today :-/
+> Please have a look at positing #48:
+> http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26269#forumpost26269
+> > 
+> So it's:
+> - different order of operator
+> - endiannes depending tricks
+> - relying on gadtools internals
+
+ignition itself should not depend on gadtools internals. gtdrag is 
+another matter, of course.
+I guess there could be many more operator order issues in the code that 
+we'll have to find.
+
+Is there an API extension to do drag&drop properly in AROS that we 
+could use to write a wrapper for the gtdrag functions?
+Only the treeview would probably need more work, but I'm not really 
+into that code that much anymore to tell more.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Wed Jan 21 18:59:40 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Wed, 21 Jan 2009 18:59:40 +0100
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <39540717518-BeMail@zon>
+References: <39540717518-BeMail@zon>
+Message-ID: <1232560780.5039.18.camel@bellodello>
+
+Am Mittwoch, den 21.01.2009, 18:15 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > Am Dienstag, den 20.01.2009, 17:43 +0100 schrieb Axel D?rfler:
+> > > That reminds me that you broke SafeClip completely (by not really 
+> > > doing 
+> > > any clipping).
+> > Problem is to rewrite the assembler part. In my C implementation I 
+> > only
+> > ensure that coordinates are inside the clipping rectangle.
+> 
+> It doesn't even have to be that fast or optimized, so that shouldn't be 
+> too hard. If you don't like math, I can do that, though ;-)
+
+Calculating the intersections with the clipping limits is easy.
+
+But for the Area functions I have to keep closed areas.
+
+What gives me headache is handling of special cases like:
+Line crosses at x=0, next line at y=0. So I have to insert the two
+intersection points and the point (0,0).
+
+And then it can happen that a line intersects two borders.
+
+If you have a solution for this, go ahead :-)
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Wed Jan 21 23:06:49 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Wed, 21 Jan 2009 23:06:49 +0100 CET
+Subject: [Ignition-develop] SafeClip RastPort
+In-Reply-To: <1232560780.5039.18.camel@bellodello>
+Message-ID: <57001736404-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> Am Mittwoch, den 21.01.2009, 18:15 +0100 schrieb Axel D?rfler:
+> > Matthias Rustler <mrustler at gmx.de> wrote:
+> > > Problem is to rewrite the assembler part. In my C implementation 
+> > > I 
+> > > only ensure that coordinates are inside the clipping rectangle.
+> > It doesn't even have to be that fast or optimized, so that 
+> > shouldn't be 
+> > too hard. If you don't like math, I can do that, though ;-)
+> Calculating the intersections with the clipping limits is easy.
+> 
+> But for the Area functions I have to keep closed areas.
+> 
+> What gives me headache is handling of special cases like:
+> Line crosses at x=0, next line at y=0. So I have to insert the two
+> intersection points and the point (0,0).
+> 
+> And then it can happen that a line intersects two borders.
+
+Sure, that's a bit complicated, but I guess, since I don't remember 
+being able to specify this, that AmigaOS just follows a simple rule to 
+determine which part of the area can be regarded inside, and which 
+outside. You would just need to know it in order to implement it 
+properly :-)
+
+> If you have a solution for this, go ahead :-)
+
+I don't have something ready, I would need to write it first, too.
+The assembly code doesn't look that complicated, at least, maybe one 
+can just rewrite it in C almost 1:1.
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Fri Jan 23 08:53:55 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Fri, 23 Jan 2009 08:53:55 +0100
+Subject: [Ignition-develop] Segfault when entering a function without
+	a	parameter
+In-Reply-To: <39678491488-BeMail@zon>
+References: <39678491488-BeMail@zon>
+Message-ID: <1232697235.8198.3.camel@bellodello>
+
+Am Mittwoch, den 21.01.2009, 18:18 +0100 schrieb Axel D?rfler:
+
+> Is there an API extension to do drag&drop properly in AROS that we 
+> could use to write a wrapper for the gtdrag functions?
+> Only the treeview would probably need more work, but I'm not really 
+> into that code that much anymore to tell more.
+
+I don't think so. Even our MUI clone Zune has only limited DND support.
+
+Nevertheless, I've asked on the aros-exec forum and hope to get an
+answer:
+
+http://aros-exec.org/modules/newbb/viewtopic.php?post_id=26337#forumpost26337
+
+Regards,
+Matthias
+
+
+
+
+From mrustler at gmx.de  Sat Jan 24 15:53:53 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Sat, 24 Jan 2009 15:53:53 +0100
+Subject: [Ignition-develop] struct Node
+Message-ID: <1232808833.18492.11.camel@bellodello>
+
+Hi,
+
+To get rid of the problems with the different order of elements of
+struct Node on AROS I'm thinking about adding something like
+
+struct MyNode
+{
+...
+};
+
+to Ignition with the element order like in the original struct Node.
+
+Otherweise I'd have to do the time consuming check for cases like
+((struct Node*)foobar)->ln_Name = ...
+
+(After trying to save and load again a file in Ignition on AROS all
+cells are yellow and the content of the cells is missing. While the
+wrong color might be an endianness problem I'm quite sure that the
+misssing cell content has to do with struct Node)
+
+Regards,
+Matthias
+
+
+
+
+From axeld at pinc-software.de  Sun Jan 25 19:07:05 2009
+From: axeld at pinc-software.de (Axel =?utf-8?q?D=C3=B6rfler?=)
+Date: Sun, 25 Jan 2009 19:07:05 +0100 CET
+Subject: [Ignition-develop] struct Node
+In-Reply-To: <1232808833.18492.11.camel@bellodello>
+Message-ID: <26529298837-BeMail@zon>
+
+Matthias Rustler <mrustler at gmx.de> wrote:
+> To get rid of the problems with the different order of elements of
+> struct Node on AROS I'm thinking about adding something like
+> 
+> struct MyNode
+> {
+> ...
+> };
+> 
+> to Ignition with the element order like in the original struct Node.
+
+Not sure if that would catch all problems, at least I don't remember if 
+there aren't some system lists (or functions) that actually need the 
+system order.
+I thought AROS would aim for a drop-in-replacement on 68k, or is there 
+structure the same there?
+
+> Otherweise I'd have to do the time consuming check for cases like
+> ((struct Node*)foobar)->ln_Name = ...
+> 
+> (After trying to save and load again a file in Ignition on AROS all
+> cells are yellow and the content of the cells is missing. While the
+> wrong color might be an endianness problem I'm quite sure that the
+> misssing cell content has to do with struct Node)
+
+I think it would be better so see where ignition actually abuses the 
+MinNode, that is, where it uses it as it were a standard MinNode. Doing 
+so should be relatively straight forward, we could also divide the work 
+if you want :-)
+
+Bye,
+   Axel.
+
+
+
+From mrustler at gmx.de  Mon Jan 26 23:33:51 2009
+From: mrustler at gmx.de (Matthias Rustler)
+Date: Mon, 26 Jan 2009 23:33:51 +0100
+Subject: [Ignition-develop] struct Node
+In-Reply-To: <26529298837-BeMail@zon>
+References: <26529298837-BeMail@zon>
+Message-ID: <1233009231.16854.8.camel@bellodello>
+
+Hi,
+
+Am Sonntag, den 25.01.2009, 19:07 +0100 schrieb Axel D?rfler:
+> Matthias Rustler <mrustler at gmx.de> wrote:
+> > To get rid of the problems with the different order of elements of
+> > struct Node on AROS I'm thinking about adding something like
+> > 
+> > struct MyNode
+> > {
+> > ...
+> > };
+> > 
+> > to Ignition with the element order like in the original struct Node.
+> 
+> Not sure if that would catch all problems, at least I don't remember if 
+> there aren't some system lists (or functions) that actually need the 
+> system order.
+> I thought AROS would aim for a drop-in-replacement on 68k, or is there 
+> structure the same there?
+
+The order of struct Node will be changed together with some other fixes
+when the V1 ABI of AROS will be released. It can't be done earlier,
+because all AROS applications have to be be recompiled after this step.
+So all these fixes must be released in one step.
+
+> > Otherweise I'd have to do the time consuming check for cases like
+> > ((struct Node*)foobar)->ln_Name = ...
+> > 
+> > (After trying to save and load again a file in Ignition on AROS all
+> > cells are yellow and the content of the cells is missing. While the
+> > wrong color might be an endianness problem I'm quite sure that the
+> > misssing cell content has to do with struct Node)
+> 
+> I think it would be better so see where ignition actually abuses the 
+> MinNode, that is, where it uses it as it were a standard MinNode. Doing 
+> so should be relatively straight forward, we could also divide the work 
+> if you want :-)
+
+I'll look at this tomorrow.
+
+Bye,
+Matthias
+
+
+
+
